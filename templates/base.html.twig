@@ -1,17 +1,57 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+    {% block stylesheets %}
+    {% endblock %}
+
+    {% block javascripts %}
+        {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% endblock %}
+</head>
+<style>
+    body {
+        font-family: 'Google Sans', sans-serif;
+
+    }
+    .no-scroll {
+        overflow: hidden;
+        height: 100vh;
+    }
+
+
+</style>
+<body class="{{ app.request.attributes.get('_route') in ['app_login', 'app_register'] ? 'no-scroll' : '' }}">
+
+{% set hideLayout = app.request.attributes.get('_route') in ['app_login', 'app_register'] %}
+{% if not hideLayout %}
+
+
+    <header style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 1rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div style="display: flex; align-items: center;">
+            <img src="https://imgs.search.brave.com/XugoN8LnUUCJ5uiXqu9N2-VLs26dPjZTwumh42jt-PU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tYWls/bWV0ZW9yLmNvbS9s/b2dvcy9hc3NldHMv/UE5HL0dvb2dsZV9G/b3Jtc19Mb2dvXzUx/MnB4LnBuZw" alt="Forms Logo" style="width: 40px; margin-right: 12px;">
+            <a href="{{ path('app_home') }}" style="text-decoration: none; color: #5f6368; font-size: 24px; font-weight: bold;">Forms</a>
+        </div>
+
+        <div>
+            {% if app.user %}
+                <span style="margin-right: 1rem;">👋 {{ app.user.email }}</span>
+                <a href="{{ path('app_logout') }}" style="text-decoration: none; color: #d33;">Logout</a>
+            {% else %}
+                <a href="{{ path('app_login') }}" style="margin-right: 1rem; text-decoration: none;">Login</a>
+                <a href="{{ path('app_register') }}" style="text-decoration: none;">Register</a>
+            {% endif %}
+        </div>
+    </header>
+
+{% endif %}
+<main>
+    {% block body %}{% endblock %}
+</main>
+</body>
 </html>
