@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -33,6 +35,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    /**
+     * @var Collection<int, FormTemplate>
+     */
+    #[ORM\OneToMany(targetEntity: FormTemplate::class, mappedBy: 'owner')]
+    private Collection $formTemplates;
+
+    public function __construct()
+    {
+        $this->formTemplates = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -105,5 +118,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, FormTemplate>
+     */
+    public function getFormTemplates(): Collection
+    {
+        return $this->formTemplates;
+    }
+
+    public function addFormTemplate(FormTemplate $formTemplate): static
+    {
+        if (!$this->formTemplates->contains($formTemplate)) {
+            $this->formTemplates->add($formTemplate);
+            $formTemplate->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFormTemplate(FormTemplate $formTemplate): static
+    {
+        if ($this->formTemplates->removeElement($formTemplate)) {
+            // set the owning side to null (unless already changed)
+            if ($formTemplate->getOwner() === $this) {
+                $formTemplate->setOwner(null);
+            }
+        }
+
+        return $this;
     }
 }
