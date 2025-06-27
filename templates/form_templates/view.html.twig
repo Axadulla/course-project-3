@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Редактировать форму{% endblock %}
+
+{% block body %}
+    <div class="min-h-screen bg-gray-100 py-10 px-4">
+        <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-8">
+            <h1 class="text-3xl font-semibold text-gray-900 mb-2">{{ formTemplate.title }}</h1>
+            <p class="text-gray-600 mb-4">{{ formTemplate.description }}</p>
+
+            <a href="{{ path('form_field_edit', { id: formTemplate.id }) }}"
+               class="inline-block mb-8 bg-purple-100 text-purple-800 px-4 py-2 rounded-lg font-medium hover:bg-purple-200 transition"
+            >
+                Редактировать поля
+            </a>
+
+            <form method="post" class="space-y-6">
+                {% for field in fields %}
+                    <div class="bg-gray-50 p-5 rounded-xl shadow-sm">
+                        <label class="block text-gray-800 font-medium mb-2">
+                            {{ field.label }}
+                        </label>
+
+                        {% set fieldName = field.label|lower|replace({' ': '_'}) %}
+
+                        {% if field.type == 'text' %}
+                            <input type="text" name="{{ fieldName }}"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            >
+
+                        {% elseif field.type == 'checkbox' %}
+                            <div class="flex items-center">
+                                <input type="checkbox" name="{{ fieldName }}"
+                                       class="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500">
+                                <label class="ml-2 text-gray-700 text-sm">Выбрать</label>
+                            </div>
+
+                        {% elseif field.type == 'radio' or field.type == 'select' %}
+                            {% set options = field.options %}
+                            {% if field.type == 'select' %}
+                                <select name="{{ fieldName }}"
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                >
+                                    {% for option in options %}
+                                        <option value="{{ option }}">{{ option }}</option>
+                                    {% endfor %}
+                                </select>
+                            {% else %}
+                                <div class="space-y-2">
+                                    {% for option in options %}
+                                        <label class="flex items-center text-gray-700 text-sm">
+                                            <input type="radio" name="{{ fieldName }}" value="{{ option }}"
+                                                   class="text-purple-600 focus:ring-purple-500 border-gray-300 rounded">
+                                            <span class="ml-2">{{ option }}</span>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <div class="mt-8">
+                    <button type="submit"
+                            class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    >
+                        Отправить
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
