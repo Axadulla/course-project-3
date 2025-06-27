@@ -1,1 +1,1 @@
-axadulla.uz
+https://axadulla.uz/
