@@ -5,7 +5,9 @@
     <title>{% block title %}Welcome!{% endblock %}</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
 
     {% block stylesheets %}
     {% endblock %}
@@ -38,13 +40,26 @@
             <a href="{{ path('app_home') }}" style="text-decoration: none; color: #5f6368; font-size: 24px; font-weight: bold;">Forms</a>
         </div>
 
-        <div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <a href="{{ path('app_home') }}">🏠 Главная</a>
+            <a href="{{ path('form_template_index') }}">📋 Все формы</a>
+
+{#            <a href="{{ path('user_profile') }}">👤 Кабинет</a>#}
+
+{#            <form method="post" action="{{ path('app_switch_theme') }}" style="display:inline;">#}
+{#                <button type="submit" style="background:none; border:none; cursor:pointer;">🎨 Переключить тему</button>#}
+{#            </form>#}
+
+{#            <form method="post" action="{{ path('app_switch_language') }}" style="display:inline;">#}
+{#                <button type="submit" style="background:none; border:none; cursor:pointer;">🌐 Язык</button>#}
+{#            </form>#}
+
             {% if app.user %}
-                <span style="margin-right: 1rem;">👋 {{ app.user.email }}</span>
-                <a href="{{ path('app_logout') }}" style="text-decoration: none; color: #d33;">Logout</a>
+                <span>👋 {{ app.user.email }}</span>
+                <a href="{{ path('app_logout') }}" style="color: #d33;">Logout</a>
             {% else %}
-                <a href="{{ path('app_login') }}" style="margin-right: 1rem; text-decoration: none;">Login</a>
-                <a href="{{ path('app_register') }}" style="text-decoration: none;">Register</a>
+                <a href="{{ path('app_login') }}">Login</a>
+                <a href="{{ path('app_register') }}">Register</a>
             {% endif %}
         </div>
     </header>
