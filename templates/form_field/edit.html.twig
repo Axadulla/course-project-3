@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Редактировать поля формы{% endblock %}
+
+{% block body %}
+    <h1>Редактировать поля формы: {{ formTemplate.title }}</h1>
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+
+    {{ form_end(form) }}
+
+    <hr>
+
+    <h2>Существующие поля:</h2>
+    <ul>
+        {% for field in fields %}
+            <li>{{ field.label }} ({{ field.type }})</li>
+        {% else %}
+            <li>Нет добавленных полей</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
