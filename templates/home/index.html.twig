@@ -1,4 +1,4 @@
-{# templates/home/index.html.twig #}
+{# templates/home/new.html.twig #}
 {% extends 'base.html.twig' %}
 
 {% block title %}Forms{% endblock %}
@@ -92,10 +92,10 @@
     <div class="container">
         <div class="section-title">Start a new form</div>
         <div class="template-grid">
-            <div class="template-card" onclick="alert('Create blank form')">
+            <a href="{{ path('form_template_new') }}" class="template-card">
                 <img src="https://ssl.gstatic.com/docs/templates/thumbnails/forms-blank-googlecolors.png" alt="Blank Form">
                 <div class="title">Blank</div>
-            </div>
+            </a>
             <div class="template-card">
                 <img src="https://ssl.gstatic.com/docs/templates/thumbnails/forms-party-invitation.png" alt="Template">
                 <div class="title">Party Invite</div>
