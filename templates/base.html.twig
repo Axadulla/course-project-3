@@ -21,6 +21,14 @@
         font-family: 'Google Sans', sans-serif;
 
     }
+    /*body.dark {*/
+    /*    background-color: #1a1a1a;*/
+    /*    color: white;*/
+    /*}*/
+    /*body.light {*/
+    /*    background-color: white;*/
+    /*    color: black;*/
+    /*}*/
     .no-scroll {
         overflow: hidden;
         height: 100vh;
@@ -28,7 +36,7 @@
 
 
 </style>
-<body class="{{ app.request.attributes.get('_route') in ['app_login', 'app_register'] ? 'no-scroll' : '' }}">
+<body class="{{ app.request.attributes.get('_route') in ['app_login', 'app_register'] ? 'no-scroll' : '' }} {# {{ app.session.get('theme', 'light') }} #}">
 
 {% set hideLayout = app.request.attributes.get('_route') in ['app_login', 'app_register'] %}
 {% if not hideLayout %}
@@ -44,7 +52,7 @@
             <a href="{{ path('app_home') }}">🏠 Главная</a>
             <a href="{{ path('form_template_index') }}">📋 Все формы</a>
 
-{#            <a href="{{ path('user_profile') }}">👤 Кабинет</a>#}
+            <a href="{{ path('user_profile') }}">👤 Кабинет</a>
 
 {#            <form method="post" action="{{ path('app_switch_theme') }}" style="display:inline;">#}
 {#                <button type="submit" style="background:none; border:none; cursor:pointer;">🎨 Переключить тему</button>#}
