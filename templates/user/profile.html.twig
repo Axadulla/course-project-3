@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block body %}
+    <div class="p-6 max-w-xl mx-auto bg-white shadow-md rounded-lg mt-6">
+        <h1 class="text-2xl font-bold mb-4">👤 Ваш профиль</h1>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Роли:</strong> {{ user.roles|join(', ') }}</p>
+    </div>
+{% endblock %}
