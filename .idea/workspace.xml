@@ -4,25 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="35402323-e725-46a7-8775-1b3c1ecb81c6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/bundles.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/bundles.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/packages/security.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/packages/security.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/services.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/services.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/FormTemplateController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/FormTemplateController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/symfony.lock" beforeDir="false" afterPath="$PROJECT_DIR$/symfony.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/base.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/form_field/edit.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/form_field/edit.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/form_templates/edit.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/form_templates/edit.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/form_templates/edit_template.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/form_templates/edit_template.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/form_templates/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/form_templates/index.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/form_templates/view.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/form_templates/view.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/registration/register.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/registration/register.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/security/login.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/security/login.html.twig" afterDir="false" />
-    </list>
+    <list default="true" id="35402323-e725-46a7-8775-1b3c1ecb81c6" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -214,7 +196,7 @@
       <updated>1750496962025</updated>
       <workItem from="1750496963377" duration="20344000" />
       <workItem from="1750742569505" duration="16746000" />
-      <workItem from="1751041735596" duration="20429000" />
+      <workItem from="1751041735596" duration="20765000" />
     </task>
     <servers />
   </component>
