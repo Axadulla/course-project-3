@@ -104,7 +104,7 @@ final class FormTemplateController extends AbstractController
     {
         $forms = $formTemplateRepository->findBy([], ['id' => 'ASC']);
 
-        return $this->render('form_templates/index.html.twig', [
+        return $this->render('form_templates/profile.html.twig', [
             'forms' => $forms,
         ]);
     }
