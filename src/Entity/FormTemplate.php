@@ -23,8 +23,9 @@ class FormTemplate
     private ?string $description = null;
 
     #[ORM\ManyToOne(inversedBy: 'formTemplates')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?User $owner = null;
+
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;

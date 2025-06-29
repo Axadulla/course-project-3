@@ -39,8 +39,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, FormTemplate>
      */
-    #[ORM\OneToMany(targetEntity: FormTemplate::class, mappedBy: 'owner')]
+    #[ORM\OneToMany(
+        targetEntity: FormTemplate::class,
+        mappedBy: 'owner',
+        cascade: ['remove'],
+        orphanRemoval: true
+    )]
     private Collection $formTemplates;
+
 
     public function __construct()
     {
