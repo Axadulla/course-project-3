@@ -42,34 +42,69 @@
 {% if not hideLayout %}
 
 
-    <header style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 1rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-        <div style="display: flex; align-items: center;">
-            <img src="https://imgs.search.brave.com/XugoN8LnUUCJ5uiXqu9N2-VLs26dPjZTwumh42jt-PU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tYWls/bWV0ZW9yLmNvbS9s/b2dvcy9hc3NldHMv/UE5HL0dvb2dsZV9G/b3Jtc19Mb2dvXzUx/MnB4LnBuZw" alt="Forms Logo" style="width: 40px; margin-right: 12px;">
-            <a href="{{ path('app_home') }}" style="text-decoration: none; color: #5f6368; font-size: 24px; font-weight: bold;">Forms</a>
+    <header class="bg-white px-8 py-4 shadow flex justify-between items-center">
+        <div class="flex items-center">
+            <img src="https://imgs.search.brave.com/XugoN8LnUUCJ5uiXqu9N2-VLs26dPjZTwumh42jt-PU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tYWls/bWV0ZW9yLmNvbS9s/b2dvcy9hc3NldHMv/UE5HL0dvb2dsZV9G/b3Jtc19Mb2dvXzUx/MnB4LnBuZw"
+                 alt="Forms Logo"
+                 class="w-10 mr-3">
+            <a href="{{ path('app_home') }}" class="text-gray-700 text-2xl font-bold no-underline">Forms</a>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 1rem;">
-            <a href="{{ path('app_home') }}">🏠 Главная</a>
-            <a href="{{ path('form_template_index') }}">📋 Все формы</a>
+        <nav>
+            <ul class="flex gap-6 items-center text-[16px] font-medium">
+                <li>
+                    <a href="{{ path('app_home') }}"
+                       class="relative inline-block px-2 py-1 text-gray-700 after:block after:h-0.5 after:bg-indigo-500 after:scale-x-0 after:transition-transform after:duration-300 after:origin-left hover:after:scale-x-100 hover:bg-indigo-50 rounded">
+                        🏠 Главная
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ path('form_template_index') }}"
+                       class="relative inline-block px-2 py-1 text-gray-700 after:block after:h-0.5 after:bg-indigo-500 after:scale-x-0 after:transition-transform after:duration-300 after:origin-left hover:after:scale-x-100 hover:bg-indigo-50 rounded">
+                        📋 Все формы
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ path('user_profile') }}"
+                       class="relative inline-block px-2 py-1 text-gray-700 after:block after:h-0.5 after:bg-indigo-500 after:scale-x-0 after:transition-transform after:duration-300 after:origin-left hover:after:scale-x-100 hover:bg-indigo-50 rounded">
+                        👤 Кабинет
+                    </a>
+                </li>
 
-            <a href="{{ path('user_profile') }}">👤 Кабинет</a>
+                {% if is_granted('ROLE_SUPER_ADMIN') %}
+                    <li>
+                        <a href="{{ path('admin') }}"
+                           class="relative inline-block px-2 py-1 text-gray-700 after:block after:h-0.5 after:bg-indigo-500 after:scale-x-0 after:transition-transform after:duration-300 after:origin-left hover:after:scale-x-100 hover:bg-indigo-50 rounded">
+                            Admin panel
+                        </a>
+                    </li>
+                {% endif %}
 
-{#            <form method="post" action="{{ path('app_switch_theme') }}" style="display:inline;">#}
-{#                <button type="submit" style="background:none; border:none; cursor:pointer;">🎨 Переключить тему</button>#}
-{#            </form>#}
 
-{#            <form method="post" action="{{ path('app_switch_language') }}" style="display:inline;">#}
-{#                <button type="submit" style="background:none; border:none; cursor:pointer;">🌐 Язык</button>#}
-{#            </form>#}
-
-            {% if app.user %}
-                <span>👋 {{ app.user.email }}</span>
-                <a href="{{ path('app_logout') }}" style="color: #d33;">Logout</a>
-            {% else %}
-                <a href="{{ path('app_login') }}">Login</a>
-                <a href="{{ path('app_register') }}">Register</a>
-            {% endif %}
-        </div>
+                {% if app.user %}
+                    <li class="text-gray-600"> {{ app.user.email }}</li>
+                    <li>
+                        <a href="{{ path('app_logout') }}"
+                           class="relative inline-block px-2 py-1 text-red-600 after:block after:h-0.5 after:bg-red-500 after:scale-x-0 after:transition-transform after:duration-300 after:origin-left hover:after:scale-x-100 hover:bg-red-50 rounded">
+                            Logout
+                        </a>
+                    </li>
+                {% else %}
+                    <li>
+                        <a href="{{ path('app_login') }}"
+                           class="relative inline-block px-2 py-1 text-gray-700 after:block after:h-0.5 after:bg-indigo-500 after:scale-x-0 after:transition-transform after:duration-300 after:origin-left hover:after:scale-x-100 hover:bg-indigo-50 rounded">
+                            Login
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ path('app_register') }}"
+                           class="relative inline-block px-2 py-1 text-gray-700 after:block after:h-0.5 after:bg-indigo-500 after:scale-x-0 after:transition-transform after:duration-300 after:origin-left hover:after:scale-x-100 hover:bg-indigo-50 rounded">
+                            Register
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
     </header>
 
 {% endif %}
