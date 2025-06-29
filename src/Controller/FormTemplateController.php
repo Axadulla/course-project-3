@@ -25,7 +25,7 @@ final class FormTemplateController extends AbstractController
     {
         $formTemplate = new FormTemplate();
         $formTemplate->setCreatedAt(new \DateTimeImmutable());
-        $formTemplate->setOwner($this->getUser()); // 👈
+        $formTemplate->setOwner($this->getUser());
 
         $form = $this->createFormBuilder($formTemplate)
             ->add('title')
@@ -50,9 +50,13 @@ final class FormTemplateController extends AbstractController
 
     public function editFields(FormTemplate $formTemplate, Request $request, EntityManagerInterface $em): Response
     {
-        if ($this->getUser() !== $formTemplate->getOwner()) {
+        if (
+            $this->getUser() !== $formTemplate->getOwner()
+            && !$this->isGranted('ROLE_SUPER_ADMIN')
+        ) {
             throw $this->createAccessDeniedException();
         }
+
 
         $field = new FormField();
         $field->setFormTemplate($formTemplate);
@@ -62,15 +66,15 @@ final class FormTemplateController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Обрабатываем optionsRaw в options
+
             $raw = $field->getOptionsRaw();
             if (!empty($raw)) {
-                // Пытаемся декодировать JSON
+
                 $decoded = json_decode($raw, true);
                 if (json_last_error() === JSON_ERROR_NONE) {
                     $field->setOptions($decoded);
                 } else {
-                    // Если не JSON, пытаемся через запятую
+
                     $field->setOptions(array_map('trim', explode(',', $raw)));
                 }
             } else {
@@ -93,18 +97,37 @@ final class FormTemplateController extends AbstractController
     #[Route('/form-template/{id}/view', name: 'form_template_view')]
     public function view(FormTemplate $formTemplate): Response
     {
+        $user = $this->getUser();
+
+        if (!$formTemplate->isPublic() && $formTemplate->getOwner() !== $user ) {
+            throw $this->createAccessDeniedException('Вы не можете просматривать эту форму.');
+        }
+
         return $this->render('form_templates/view.html.twig', [
             'formTemplate' => $formTemplate,
             'fields' => $formTemplate->getFields(),
         ]);
     }
 
+
     #[Route('/form-template', name: 'form_template_index')]
     public function index(FormTemplateRepository $formTemplateRepository): Response
     {
-        $forms = $formTemplateRepository->findBy([], ['id' => 'ASC']);
+        $user = $this->getUser();
 
-        return $this->render('form_templates/profile.html.twig', [
+        if ($this->isGranted('ROLE_SUPER_ADMIN')) {
+            $forms = $formTemplateRepository->findBy([], ['id' => 'ASC']);
+        } else {
+            $forms = $formTemplateRepository->createQueryBuilder('f')
+                ->where('f.isPublic = true')
+                ->orWhere('f.owner = :user')
+                ->setParameter('user', $user)
+                ->orderBy('f.id', 'ASC')
+                ->getQuery()
+                ->getResult();
+        }
+
+        return $this->render('form_templates/index.html.twig', [
             'forms' => $forms,
         ]);
     }
@@ -112,6 +135,14 @@ final class FormTemplateController extends AbstractController
     #[Route('/form-template/{id}/delete', name: 'form_template_delete', methods: ['POST'])]
     public function delete(FormTemplate $formTemplate, EntityManagerInterface $em, Request $request): Response
     {
+        if (
+            $this->getUser() !== $formTemplate->getOwner()
+            && !$this->isGranted('ROLE_SUPER_ADMIN')
+        ) {
+            throw $this->createAccessDeniedException();
+        }
+
+
         if ($this->isCsrfTokenValid('delete_form_' . $formTemplate->getId(), $request->request->get('_token'))) {
             $em->remove($formTemplate);
             $em->flush();
@@ -125,6 +156,14 @@ final class FormTemplateController extends AbstractController
     #[Route('/form-template/{id}/edit-template', name: 'form_template_edit')]
     public function editTemplate(FormTemplate $formTemplate, Request $request, EntityManagerInterface $em): Response
     {
+        if (
+            $this->getUser() !== $formTemplate->getOwner()
+            && !$this->isGranted('ROLE_SUPER_ADMIN')
+        ) {
+            throw $this->createAccessDeniedException();
+        }
+
+
         $form = $this->createFormBuilder($formTemplate)
             ->add('title')
             ->add('description')
@@ -134,7 +173,7 @@ final class FormTemplateController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Устанавливаем новое значение updatedAt
+
             $formTemplate->setUpdatedAt(new \DateTimeImmutable());
 
             $em->flush();

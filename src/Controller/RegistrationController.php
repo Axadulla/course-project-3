@@ -36,6 +36,10 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
+
+            $request->getSession()->remove('_security.main.target_path');
+
+
             return $userAuthenticator->authenticateUser(
                 $user,
                 $authenticator,
