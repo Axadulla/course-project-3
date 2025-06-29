@@ -2,7 +2,6 @@
 
 {% block title %}Создать форму{% endblock %}
 
-
 {% block body %}
     <div class="min-h-screen bg-gray-100 flex justify-center py-12 px-4">
         <div class="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-8">
@@ -24,6 +23,17 @@
                         class: 'w-full border border-gray-400 bg-gray-50 rounded-lg shadow-sm px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-purple-500'
                     }
                 }) }}
+
+                <div class="flex items-center space-x-3">
+                    {{ form_widget(form.isPublic, {
+                        attr: {
+                            class: 'h-5 w-5 text-purple-600 focus:ring-purple-500 border-gray-300 rounded'
+                        }
+                    }) }}
+                    {{ form_label(form.isPublic, null, {
+                        label_attr: { class: 'text-gray-700 text-base font-semibold' }
+                    }) }}
+                </div>
             </div>
 
             <div class="mt-8">
