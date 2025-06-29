@@ -1,4 +1,4 @@
-{% extends '../base.html.twig' %}
+{% extends '/base.html.twig' %}
 
 {% block title %}Редактировать шаблон формы{% endblock %}
 
@@ -24,12 +24,20 @@
                     }
                 }) }}
 
-                {# если есть поле isPublic #}
+
                 {% if form.isPublic is defined %}
-                    {{ form_row(form.isPublic, {
-                        label_attr: { class: 'block text-gray-700 text-base font-semibold mb-1' }
-                    }) }}
+                    <div class="flex items-center space-x-3">
+                        {{ form_widget(form.isPublic, {
+                            attr: {
+                                class: 'h-5 w-5 text-purple-600 focus:ring-purple-500 border-gray-300 rounded'
+                            }
+                        }) }}
+                        {{ form_label(form.isPublic, null, {
+                            label_attr: { class: 'text-gray-700 text-base font-semibold' }
+                        }) }}
+                    </div>
                 {% endif %}
+
             </div>
 
             <div class="mt-8">
