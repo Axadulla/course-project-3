@@ -1,5 +1,6 @@
 
 ###> symfony/framework-bundle ###
+.idea/
 /.env.local
 /.env.local.php
 /.env.*.local
@@ -17,3 +18,17 @@
 ###> symfony/asset-mapper ###
 /public/assets/
 ###< symfony/asset-mapper ###
+# IDE / Editor files
+*.swp
+*.swo
+*.bak
+*.tmp
+*.orig
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Deployment or script backups
+*.save
+deploy.sh.save
