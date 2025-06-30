@@ -7,16 +7,11 @@
     <list default="true" id="35402323-e725-46a7-8775-1b3c1ecb81c6" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Controller/FormTemplateController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/FormTemplateController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controller/RegistrationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/RegistrationController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/FormTemplate.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/FormTemplate.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/User.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/base.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/form_field/edit.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/form_field/edit.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controller/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/UserController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/form_templates/edit.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/form_templates/edit.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/form_templates/edit_template.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/form_templates/edit_template.html.twig" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/form_templates/index.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/form_templates/index.html.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/form_templates/new.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/form_templates/new.html.twig" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/form_templates/view.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/form_templates/view.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/user/profile.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/user/profile.html.twig" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -209,7 +204,7 @@
       <updated>1750496962025</updated>
       <workItem from="1750496963377" duration="20344000" />
       <workItem from="1750742569505" duration="16746000" />
-      <workItem from="1751041735596" duration="29180000" />
+      <workItem from="1751041735596" duration="36351000" />
     </task>
     <servers />
   </component>
