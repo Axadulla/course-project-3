@@ -100,7 +100,7 @@ final class FormTemplateController extends AbstractController
         $user = $this->getUser();
 
         if (!$formTemplate->isPublic() && $formTemplate->getOwner() !== $user ) {
-            throw $this->createAccessDeniedException('Вы не можете просматривать эту форму.');
+            throw $this->createAccessDeniedException();
         }
 
         return $this->render('form_templates/view.html.twig', [
