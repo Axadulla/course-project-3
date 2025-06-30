@@ -43,16 +43,18 @@
                                 <td class="px-6 py-4 text-right space-x-2">
                                     <a href="{{ path('form_template_view', { id: form.id }) }}"
                                        class="text-sm text-purple-600 hover:underline">Открыть</a>
-                                    <a href="{{ path('form_template_edit', { id: form.id }) }}"
-                                       class="text-sm text-blue-600 hover:underline">Редактировать</a>
+                                    {% if app.user == form.owner or is_granted('ROLE_SUPER_ADMIN') %}
+                                        <a href="{{ path('form_template_edit', { id: form.id }) }}"
+                                           class="text-sm text-blue-600 hover:underline">Редактировать</a>
 
-                                    <form method="post" action="{{ path('form_template_delete', { id: form.id }) }}" style="display:inline-block"
-                                          onsubmit="return confirm('Вы уверены, что хотите удалить эту форму?');">
-                                        <input type="hidden" name="_token" value="{{ csrf_token('delete_form_' ~ form.id) }}">
-                                        <button class="text-sm text-red-600 hover:underline bg-transparent border-none p-0 m-0" style="cursor:pointer;">
-                                            Удалить
-                                        </button>
-                                    </form>
+                                        <form method="post" action="{{ path('form_template_delete', { id: form.id }) }}" style="display:inline-block"
+                                              onsubmit="return confirm('Вы уверены, что хотите удалить эту форму?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete_form_' ~ form.id) }}">
+                                            <button class="text-sm text-red-600 hover:underline bg-transparent border-none p-0 m-0" style="cursor:pointer;">
+                                                Удалить
+                                            </button>
+                                        </form>
+                                    {% endif %}
 
                                 </td>
                             </tr>
