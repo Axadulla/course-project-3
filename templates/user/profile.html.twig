@@ -3,9 +3,67 @@
 {% block title %}Профиль{% endblock %}
 
 {% block body %}
-    <div class="p-6 max-w-xl mx-auto bg-white shadow-md rounded-lg mt-6">
-        <h1 class="text-2xl font-bold mb-4">👤 Ваш профиль</h1>
-        <p><strong>Email:</strong> {{ user.email }}</p>
-        <p><strong>Роли:</strong> {{ user.roles|join(', ') }}</p>
+    <div class="min-h-screen bg-gray-100 py-12 px-4">
+        <div class="max-w-4xl mx-auto">
+            <!-- Карточка профиля -->
+            <div class="bg-white shadow-md rounded-2xl p-6 mb-8">
+                <h1 class="text-3xl font-bold text-gray-800 mb-4">👤 Ваш профиль</h1>
+                <div class="space-y-2 text-gray-700">
+                    <p><span class="font-semibold">Email:</span> {{ user.email }}</p>
+                    <p><span class="font-semibold">Роли:</span> {{ user.roles|join(', ') }}</p>
+                </div>
+            </div>
+
+            <!-- Ваши формы -->
+            <div class="bg-white shadow-md rounded-2xl p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-semibold text-gray-800">📄 Ваши формы</h2>
+                    <a href="{{ path('form_template_new') }}"
+                       class="inline-block bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-700 transition">
+                        + Создать форму
+                    </a>
+                </div>
+
+                {% if forms is empty %}
+                    <div class="text-center text-gray-500 py-12">У вас пока нет созданных форм.</div>
+                {% else %}
+                    <div class="overflow-x-auto rounded-lg border border-gray-200">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50 text-gray-700">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-sm font-semibold uppercase">ID</th>
+                                <th class="px-6 py-3 text-left text-sm font-semibold uppercase">Название</th>
+                                <th class="px-6 py-3 text-left text-sm font-semibold uppercase">Создана</th>
+                                <th class="px-6 py-3 text-right text-sm font-semibold uppercase">Действия</th>
+                            </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-100">
+                            {% for form in forms %}
+                                <tr class="hover:bg-gray-50 transition">
+                                    <td class="px-6 py-4 text-sm text-gray-800">{{ form.id }}</td>
+                                    <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ form.title }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-500">{{ form.createdAt|date('d.m.Y') }}</td>
+                                    <td class="px-6 py-4 text-right space-x-2">
+                                        <a href="{{ path('form_template_view', { id: form.id }) }}"
+                                           class="inline-block text-purple-600 hover:underline text-sm">Открыть</a>
+                                        <a href="{{ path('form_template_edit', { id: form.id }) }}"
+                                           class="inline-block text-blue-600 hover:underline text-sm">Редактировать</a>
+                                        <form method="post" action="{{ path('form_template_delete', { id: form.id }) }}"
+                                              style="display:inline-block"
+                                              onsubmit="return confirm('Удалить форму?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete_form_' ~ form.id) }}">
+                                            <button class="inline-block text-red-600 hover:underline text-sm bg-transparent border-none p-0 m-0 cursor-pointer">
+                                                Удалить
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
 {% endblock %}
