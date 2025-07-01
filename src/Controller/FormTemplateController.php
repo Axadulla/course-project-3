@@ -6,14 +6,9 @@ use App\Entity\FormTemplate;
 use App\Entity\FormField;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Validator\Constraints as Assert;
 use App\Form\FormFieldType;
 use App\Repository\FormTemplateRepository;
 

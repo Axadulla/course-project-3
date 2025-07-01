@@ -21,14 +21,6 @@
         font-family: 'Google Sans', sans-serif;
 
     }
-    /*body.dark {*/
-    /*    background-color: #1a1a1a;*/
-    /*    color: white;*/
-    /*}*/
-    /*body.light {*/
-    /*    background-color: white;*/
-    /*    color: black;*/
-    /*}*/
     .no-scroll {
         overflow: hidden;
         height: 100vh;
@@ -36,7 +28,7 @@
 
 
 </style>
-<body class="{{ app.request.attributes.get('_route') in ['app_login', 'app_register'] ? 'no-scroll' : '' }} {# {{ app.session.get('theme', 'light') }} #}">
+<body class="{{ app.request.attributes.get('_route') in ['app_login', 'app_register'] ? 'no-scroll' : '' }}">
 
 {% set hideLayout = app.request.attributes.get('_route') in ['app_login', 'app_register'] %}
 {% if not hideLayout %}

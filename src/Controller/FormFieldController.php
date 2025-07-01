@@ -15,7 +15,7 @@ final class FormFieldController extends AbstractController
     #[Route('/form-field/{id}/edit', name: 'form_field_update')]
     public function updateField(FormField $field, Request $request, EntityManagerInterface $em): Response
     {
-        // Преобразуем массив options в строку для редактирования
+
         $field->setOptionsRaw($field->getOptions() ? implode(', ', $field->getOptions()) : '');
 
         $form = $this->createForm(FormFieldType::class, $field);
