@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Form\FormFieldType;
 use App\Repository\FormTemplateRepository;
+use App\Entity\Comment;
+use App\Form\CommentType;
 
 
 final class FormTemplateController extends AbstractController
@@ -90,19 +92,36 @@ final class FormTemplateController extends AbstractController
     }
 
     #[Route('/form-template/{id}/view', name: 'form_template_view')]
-    public function view(FormTemplate $formTemplate): Response
+    public function view(FormTemplate $formTemplate, Request $request, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
 
-        if (!$formTemplate->isPublic() && $formTemplate->getOwner() !== $user ) {
+        if (!$formTemplate->isPublic() && $formTemplate->getOwner() !== $user) {
             throw $this->createAccessDeniedException();
+        }
+
+        $comment = new Comment();
+        $comment->setForm($formTemplate);
+        $comment->setAuthor($user);
+        $comment->setCreatedAt(new \DateTimeImmutable());
+
+        $commentForm = $this->createForm(CommentType::class, $comment);
+        $commentForm->handleRequest($request);
+
+        if ($commentForm->isSubmitted() && $commentForm->isValid()) {
+            $em->persist($comment);
+            $em->flush();
+
+            return $this->redirectToRoute('form_template_view', ['id' => $formTemplate->getId()]);
         }
 
         return $this->render('form_templates/view.html.twig', [
             'formTemplate' => $formTemplate,
             'fields' => $formTemplate->getFields(),
+            'commentForm' => $commentForm->createView(),
         ]);
     }
+
 
 
     #[Route('/form-template', name: 'form_template_index')]
