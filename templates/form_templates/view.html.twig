@@ -15,7 +15,6 @@
                 </a>
             {% endif %}
 
-
             <form method="post" class="space-y-6">
                 {% for field in fields %}
                     <div class="bg-gray-50 p-5 rounded-xl shadow-sm">
@@ -70,6 +69,49 @@
                     </button>
                 </div>
             </form>
+
+            <p class="text-gray-600 mt-10 mb-2">Если форма вам понравилась — поддержите автора лайком 👍</p>
+            <div class="mb-6">
+                <form method="post" action="{{ path('form_like', {'id': formTemplate.id}) }}">
+                    {% if app.user and formTemplate.likes|filter(l => l.author == app.user)|length > 0 %}
+                        <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">
+                            Убрать лайк
+                        </button>
+                    {% else %}
+                        <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition">
+                            Лайкнуть
+                        </button>
+                    {% endif %}
+                    <span class="ml-3 text-gray-700 text-lg align-middle">👍 {{ formTemplate.likes|length }}</span>
+                </form>
+            </div>
+
+
+            <hr class="my-10">
+
+            <h2 class="text-2xl font-semibold mb-4">💬 Комментарии</h2>
+
+            {% for comment in formTemplate.comments %}
+                <div class="bg-gray-50 p-4 rounded-xl shadow-sm mb-4">
+                    <p class="text-sm text-gray-800">{{ comment.content }}</p>
+                    <p class="text-xs text-gray-500 mt-2">
+                        — {{ comment.author.email }} • {{ comment.createdAt|date('d.m.Y H:i') }}
+                    </p>
+                </div>
+            {% else %}
+                <p class="text-gray-500 mb-4">Пока нет комментариев.</p>
+            {% endfor %}
+
+            <div class="mt-6">
+                {{ form_start(commentForm) }}
+                {{ form_row(commentForm.content) }}
+                <button type="submit"
+                        class="mt-2 bg-purple-600 text-white px-5 py-2 rounded-lg hover:bg-purple-700 transition font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    Добавить комментарий
+                </button>
+                {{ form_end(commentForm) }}
+            </div>
+
         </div>
     </div>
 {% endblock %}
