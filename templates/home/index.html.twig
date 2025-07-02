@@ -3,110 +3,68 @@
 {% block title %}Forms{% endblock %}
 
 {% block body %}
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Google Sans', sans-serif;
-        }
+    <div class="container mx-auto mt-10 px-5 max-w-[1000px]">
+        <div class="text-[18px] font-medium mb-4 text-[#202124]">Start a new form</div>
 
-        body {
-            background-color: #f0ebf8;
-        }
-
-        header {
-            display: flex;
-            align-items: center;
-            padding: 16px 32px;
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        header img {
-            width: 40px;
-            margin-right: 12px;
-        }
-
-        header h1 {
-            font-size: 24px;
-            color: #5f6368;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        .template-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 24px;
-        }
-
-        .template-card {
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .template-card:hover {
-            transform: scale(1.02);
-        }
-
-        .template-card img {
-            width: 100%;
-            height: 140px;
-            object-fit: cover;
-        }
-
-        .template-card .title {
-            padding: 12px;
-            font-weight: 500;
-            font-size: 16px;
-        }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: 500;
-            margin-bottom: 16px;
-            color: #202124;
-        }
-
-        .form-header {
-            display: flex;
-            align-items: center;
-            padding: 16px 32px;
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-    </style>
-
-
-    <div class="container">
-        <div class="section-title">Start a new form</div>
-        <div class="template-grid">
-            <a href="{{ path('form_template_new') }}" class="template-card">
-                <img src="https://ssl.gstatic.com/docs/templates/thumbnails/forms-blank-googlecolors.png" alt="Blank Form">
-                <div class="title">Blank</div>
+        <!-- Blank and Party Invite -->
+        <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-10">
+            <a href="{{ path('form_template_new') }}" class="bg-white rounded-lg overflow-hidden shadow hover:scale-[1.02] transition duration-200 cursor-pointer">
+                <img src="https://ssl.gstatic.com/docs/templates/thumbnails/forms-blank-googlecolors.png" alt="Blank Form" class="w-full h-[140px] object-cover">
+                <div class="p-3 font-medium text-base">Blank</div>
             </a>
-            <div class="template-card">
-                <img src="https://ssl.gstatic.com/docs/templates/thumbnails/forms-party-invitation.png" alt="Template">
-                <div class="title">Party Invite</div>
+            <div class="bg-white rounded-lg overflow-hidden shadow hover:scale-[1.02] transition duration-200 cursor-pointer">
+                <img src="https://ssl.gstatic.com/docs/templates/thumbnails/forms-party-invitation.png" alt="Template" class="w-full h-[140px] object-cover">
+                <div class="p-3 font-medium text-base">Something</div>
             </div>
-            <div class="template-card">
-                <img src="https://ssl.gstatic.com/docs/templates/thumbnails/forms-contact-information.png" alt="Template">
-                <div class="title">Contact Info</div>
+
+            <div class="bg-white rounded-lg overflow-hidden shadow hover:scale-[1.02] transition duration-200 cursor-pointer">
+                <img src="https://ssl.gstatic.com/docs/templates/thumbnails/forms-party-invitation.png" alt="Template" class="w-full h-[140px] object-cover">
+                <div class="p-3 font-medium text-base">Something</div>
             </div>
-            <div class="template-card">
-                <img src="https://ssl.gstatic.com/docs/templates/thumbnails/forms-t-shirt-signup.png" alt="Template">
-                <div class="title">T-shirt Sign-Up</div>
+
+            <div class="bg-white rounded-lg overflow-hidden shadow hover:scale-[1.02] transition duration-200 cursor-pointer">
+                <img src="https://ssl.gstatic.com/docs/templates/thumbnails/forms-party-invitation.png" alt="Template" class="w-full h-[140px] object-cover">
+                <div class="p-3 font-medium text-base">Something</div>
             </div>
+        </div>
+
+        <!-- Recent and Popular side-by-side -->
+        <div class="flex flex-col lg:flex-row gap-10">
+            {% if recentForms is defined and recentForms is not empty %}
+                <div class="flex-1">
+                    <div class="text-[18px] font-medium mb-4">Recent Forms</div>
+                    <div class="grid gap-6 grid-cols-1 sm:grid-cols-2">
+                        {% for form in recentForms %}
+                            <a href="{{ path('form_template_view', {'id': form.id}) }}" class="bg-white rounded-lg overflow-hidden shadow hover:scale-[1.02] transition duration-200 cursor-pointer h-full">
+                                <div class="p-4 h-full flex flex-col justify-between min-h-[100px]">
+                                    <div class="font-medium text-base truncate">{{ form.title }}</div>
+                                    <div class="text-sm text-gray-500 mt-2">
+                                        Created {{ form.createdAt|date('d M Y') }}
+                                    </div>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if popularForms is defined and popularForms is not empty %}
+                <div class="flex-1">
+                    <div class="text-[18px] font-medium mb-4">Popular Templates</div>
+                    <div class="grid gap-6 grid-cols-1 sm:grid-cols-2">
+                        {% for form in popularForms %}
+                            <a href="{{ path('form_template_view', {'id': form.id}) }}" class="bg-white rounded-lg overflow-hidden shadow hover:scale-[1.02] transition duration-200 cursor-pointer h-full">
+                                <div class="p-4 h-full flex flex-col justify-between min-h-[100px]">
+                                    <div class="font-medium text-base truncate">{{ form.title }}</div>
+                                    <div class="text-sm text-gray-500 mt-2">
+                                        {{ form.likes is defined ? form.likes|length : 0 }} likes
+                                    </div>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
