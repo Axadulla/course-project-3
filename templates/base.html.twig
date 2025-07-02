@@ -56,12 +56,6 @@
                         📋 Все формы
                     </a>
                 </li>
-                <li>
-                    <a href="{{ path('user_profile') }}"
-                       class="relative inline-block px-2 py-1 text-gray-700 after:block after:h-0.5 after:bg-indigo-500 after:scale-x-0 after:transition-transform after:duration-300 after:origin-left hover:after:scale-x-100 hover:bg-indigo-50 rounded">
-                        👤 Кабинет
-                    </a>
-                </li>
 
                 {% if is_granted('ROLE_SUPER_ADMIN') %}
                     <li>
@@ -74,7 +68,12 @@
 
 
                 {% if app.user %}
-                    <li class="text-gray-600"> {{ app.user.email }}</li>
+                    <li>
+                        <a href="{{ path('user_profile') }}"
+                           class="relative inline-block px-2 py-1 text-gray-700 after:block after:h-0.5 after:bg-indigo-500 after:scale-x-0 after:transition-transform after:duration-300 after:origin-left hover:after:scale-x-100 hover:bg-indigo-50 rounded">
+                            👤 {{ app.user.email }}
+                        </a>
+                    </li>
                     <li>
                         <a href="{{ path('app_logout') }}"
                            class="relative inline-block px-2 py-1 text-red-600 after:block after:h-0.5 after:bg-red-500 after:scale-x-0 after:transition-transform after:duration-300 after:origin-left hover:after:scale-x-100 hover:bg-red-50 rounded">
