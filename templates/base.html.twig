@@ -5,12 +5,10 @@
     <title>{% block title %}Welcome!{% endblock %}</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
 
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
     <script>
-        // Применить тему как можно раньше, до загрузки Tailwind
         try {
             if (localStorage.getItem('theme') === 'dark') {
                 document.documentElement.classList.add('dark');
@@ -49,7 +47,7 @@
 {% set hideLayout = app.request.attributes.get('_route') in ['app_login', 'app_register'] %}
 {% if not hideLayout %}
 
-    <!-- Header -->
+
     <header class="bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-8 py-4 shadow flex justify-between items-center">
         <div class="flex items-center">
             <img src="https://imgs.search.brave.com/XugoN8LnUUCJ5uiXqu9N2-VLs26dPjZTwumh42jt-PU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tYWls/bWV0ZW9yLmNvbS9s/b2dvcy9hc3NldHMv/UE5HL0dvb2dsZV9G/b3Jtc19Mb2dvXzUx/MnB4LnBuZw"
@@ -58,7 +56,6 @@
             <a href="{{ path('app_home') }}" class="text-2xl font-bold no-underline">Forms</a>
         </div>
 
-        <!-- Navigation -->
         <nav>
             <ul class="flex gap-6 items-center text-[16px] font-medium">
                 <li>
@@ -119,7 +116,7 @@
     {% block body %}{% endblock %}
 </main>
 
-<!-- Theme Toggle Script -->
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const toggleBtn = document.getElementById('theme-toggle');
