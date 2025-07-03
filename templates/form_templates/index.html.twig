@@ -3,59 +3,58 @@
 {% block title %}Список форм{% endblock %}
 
 {% block body %}
-    <div class="min-h-screen bg-gray-100 py-10 px-4">
-        <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-lg p-8">
+    <div class="min-h-screen bg-gray-100 dark:bg-gray-900 py-10 px-4">
+        <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
             <div class="flex justify-between items-center mb-6">
-                <h1 class="text-3xl font-semibold text-gray-900">Список форм</h1>
+                <h1 class="text-3xl font-semibold text-gray-900 dark:text-white">Список форм</h1>
                 <a href="{{ path('form_template_new') }}"
-                   class="inline-block bg-purple-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-purple-700 transition">
+                   class="inline-block bg-purple-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-purple-700 dark:hover:bg-purple-500 transition">
                     + Создать форму
                 </a>
             </div>
 
             {% if forms is empty %}
-                <div class="text-center text-gray-500 py-12">Формы не найдены.</div>
+                <div class="text-center text-gray-500 dark:text-gray-400 py-12">Формы не найдены.</div>
             {% else %}
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
                         <tr>
-                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 uppercase">ID</th>
-                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 uppercase">Название</th>
-                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 uppercase">Описание</th>
-                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 uppercase">Дата создания</th>
-                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 uppercase">Обновлено</th>
-                            <th class="px-6 py-3 text-right text-sm font-semibold text-gray-600 uppercase">Действия</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-300 uppercase">ID</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-300 uppercase">Название</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-300 uppercase">Описание</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-300 uppercase">Дата создания</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600 dark:text-gray-300 uppercase">Обновлено</th>
+                            <th class="px-6 py-3 text-right text-sm font-semibold text-gray-600 dark:text-gray-300 uppercase">Действия</th>
                         </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-100">
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
                         {% for form in forms %}
-                            <tr class="hover:bg-gray-50 transition">
-                                <td class="px-6 py-4 text-sm text-gray-800">{{ form.id }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-900 font-medium">{{ form.title }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-600">{{ form.description|default('—') }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-500">
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                                <td class="px-6 py-4 text-sm text-gray-800 dark:text-gray-200">{{ form.id }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-900 dark:text-white font-medium">{{ form.title }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">{{ form.description|default('—') }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                                     {{ form.createdAt ? form.createdAt|date('d.m.Y') : '—' }}
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-500">
+                                <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                                     {{ form.updatedAt ? form.updatedAt|date('d.m.Y H:i') : '—' }}
                                 </td>
                                 <td class="px-6 py-4 text-right space-x-2">
                                     <a href="{{ path('form_template_view', { id: form.id }) }}"
-                                       class="text-sm text-purple-600 hover:underline">Открыть</a>
+                                       class="text-sm text-purple-600 dark:text-purple-400 hover:underline">Открыть</a>
                                     {% if app.user == form.owner or is_granted('ROLE_SUPER_ADMIN') %}
                                         <a href="{{ path('form_template_edit', { id: form.id }) }}"
-                                           class="text-sm text-blue-600 hover:underline">Редактировать</a>
+                                           class="text-sm text-blue-600 dark:text-blue-400 hover:underline">Редактировать</a>
 
                                         <form method="post" action="{{ path('form_template_delete', { id: form.id }) }}" style="display:inline-block"
                                               onsubmit="return confirm('Вы уверены, что хотите удалить эту форму?');">
                                             <input type="hidden" name="_token" value="{{ csrf_token('delete_form_' ~ form.id) }}">
-                                            <button class="text-sm text-red-600 hover:underline bg-transparent border-none p-0 m-0" style="cursor:pointer;">
+                                            <button class="text-sm text-red-600 dark:text-red-400 hover:underline bg-transparent border-none p-0 m-0" style="cursor:pointer;">
                                                 Удалить
                                             </button>
                                         </form>
                                     {% endif %}
-
                                 </td>
                             </tr>
                         {% endfor %}

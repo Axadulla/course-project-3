@@ -4,27 +4,30 @@
 
 {% block body %}
     <div class="container mx-auto mt-10 px-5 max-w-[1000px]">
-        <div class="text-[18px] font-medium mb-4 text-[#202124]">Start a new form</div>
+        <div class="text-[18px] font-medium mb-4 text-[#202124] dark:text-white">Start a new form</div>
 
         <!-- Blank and Party Invite -->
         <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-10">
-            <a href="{{ path('form_template_new') }}" class="bg-white rounded-lg overflow-hidden shadow hover:scale-[1.02] transition duration-200 cursor-pointer">
-                <img src="https://ssl.gstatic.com/docs/templates/thumbnails/forms-blank-googlecolors.png" alt="Blank Form" class="w-full h-[140px] object-cover">
-                <div class="p-3 font-medium text-base">Blank</div>
+            <a href="{{ path('form_template_new') }}"
+               class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow hover:scale-[1.02] transition duration-200 cursor-pointer">
+                <img src="https://ssl.gstatic.com/docs/templates/thumbnails/forms-blank-googlecolors.png" alt="Blank Form"
+                     class="w-full h-[140px] object-cover">
+                <div class="p-3 font-medium text-base text-gray-800 dark:text-white">Blank</div>
             </a>
-            <div class="bg-white rounded-lg overflow-hidden shadow hover:scale-[1.02] transition duration-200 cursor-pointer">
-                <img src="https://ssl.gstatic.com/docs/templates/thumbnails/forms-party-invitation.png" alt="Template" class="w-full h-[140px] object-cover">
-                <div class="p-3 font-medium text-base">Something</div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow hover:scale-[1.02] transition duration-200 cursor-pointer">
+                <img src="https://ssl.gstatic.com/docs/templates/thumbnails/forms-party-invitation.png" alt="Template"
+                     class="w-full h-[140px] object-cover">
+                <div class="p-3 font-medium text-base text-gray-800 dark:text-white">Something</div>
             </div>
-
-            <div class="bg-white rounded-lg overflow-hidden shadow hover:scale-[1.02] transition duration-200 cursor-pointer">
-                <img src="https://ssl.gstatic.com/docs/templates/thumbnails/forms-party-invitation.png" alt="Template" class="w-full h-[140px] object-cover">
-                <div class="p-3 font-medium text-base">Something</div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow hover:scale-[1.02] transition duration-200 cursor-pointer">
+                <img src="https://ssl.gstatic.com/docs/templates/thumbnails/forms-party-invitation.png" alt="Template"
+                     class="w-full h-[140px] object-cover">
+                <div class="p-3 font-medium text-base text-gray-800 dark:text-white">Something</div>
             </div>
-
-            <div class="bg-white rounded-lg overflow-hidden shadow hover:scale-[1.02] transition duration-200 cursor-pointer">
-                <img src="https://ssl.gstatic.com/docs/templates/thumbnails/forms-party-invitation.png" alt="Template" class="w-full h-[140px] object-cover">
-                <div class="p-3 font-medium text-base">Something</div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow hover:scale-[1.02] transition duration-200 cursor-pointer">
+                <img src="https://ssl.gstatic.com/docs/templates/thumbnails/forms-party-invitation.png" alt="Template"
+                     class="w-full h-[140px] object-cover">
+                <div class="p-3 font-medium text-base text-gray-800 dark:text-white">Something</div>
             </div>
         </div>
 
@@ -32,13 +35,14 @@
         <div class="flex flex-col lg:flex-row gap-10">
             {% if recentForms is defined and recentForms is not empty %}
                 <div class="flex-1">
-                    <div class="text-[18px] font-medium mb-4">Recent Forms</div>
+                    <div class="text-[18px] font-medium mb-4 text-[#202124] dark:text-white">Recent Forms</div>
                     <div class="grid gap-6 grid-cols-1 sm:grid-cols-2">
                         {% for form in recentForms %}
-                            <a href="{{ path('form_template_view', {'id': form.id}) }}" class="bg-white rounded-lg overflow-hidden shadow hover:scale-[1.02] transition duration-200 cursor-pointer h-full">
+                            <a href="{{ path('form_template_view', {'id': form.id}) }}"
+                               class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow hover:scale-[1.02] transition duration-200 cursor-pointer h-full">
                                 <div class="p-4 h-full flex flex-col justify-between min-h-[100px]">
-                                    <div class="font-medium text-base truncate">{{ form.title }}</div>
-                                    <div class="text-sm text-gray-500 mt-2">
+                                    <div class="font-medium text-base text-gray-800 dark:text-white truncate">{{ form.title }}</div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">
                                         Created {{ form.createdAt|date('d M Y') }}
                                     </div>
                                 </div>
@@ -50,13 +54,14 @@
 
             {% if popularForms is defined and popularForms is not empty %}
                 <div class="flex-1">
-                    <div class="text-[18px] font-medium mb-4">Popular Templates</div>
+                    <div class="text-[18px] font-medium mb-4 text-[#202124] dark:text-white">Popular Templates</div>
                     <div class="grid gap-6 grid-cols-1 sm:grid-cols-2">
                         {% for form in popularForms %}
-                            <a href="{{ path('form_template_view', {'id': form.id}) }}" class="bg-white rounded-lg overflow-hidden shadow hover:scale-[1.02] transition duration-200 cursor-pointer h-full">
+                            <a href="{{ path('form_template_view', {'id': form.id}) }}"
+                               class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow hover:scale-[1.02] transition duration-200 cursor-pointer h-full">
                                 <div class="p-4 h-full flex flex-col justify-between min-h-[100px]">
-                                    <div class="font-medium text-base truncate">{{ form.title }}</div>
-                                    <div class="text-sm text-gray-500 mt-2">
+                                    <div class="font-medium text-base text-gray-800 dark:text-white truncate">{{ form.title }}</div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400 mt-2">
                                         {{ form.likes is defined ? form.likes|length : 0 }} likes
                                     </div>
                                 </div>
