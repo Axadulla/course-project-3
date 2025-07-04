@@ -39,7 +39,6 @@ class FormFieldType extends AbstractType
                 'label' => 'Обязательное',
                 'required' => false,
             ])
-            ->add('order', IntegerType::class, ['label' => 'Порядок'])
             ->add('save', SubmitType::class, ['label' => 'Добавить поле']);
     }
 

@@ -97,21 +97,24 @@ class FormField
 
 
     #[ORM\Column(name: '`order`', type: 'integer')]
-    private ?int $order = null;
+    private int $order = 0;
 
     public function getOrder(): ?int
     {
         return $this->order;
     }
 
-    public function setOrder(?int $order): self
+    public function setOrder(int $order): self
     {
         $this->order = $order;
         return $this;
     }
 
 
+
+    #[\Doctrine\ORM\Mapping\Transient]
     private ?string $optionsRaw = null;
+
 
     public function getOptionsRaw(): ?string
     {

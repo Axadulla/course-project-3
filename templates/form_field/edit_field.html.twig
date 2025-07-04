@@ -64,18 +64,6 @@
                 }) }}
             </div>
 
-            <div>
-                {{ form_label(form.order, null, {
-                    'label_attr': {
-                        'class': 'block text-gray-700 dark:text-gray-200 font-semibold mb-1'
-                    }
-                }) }}
-                {{ form_widget(form.order, {
-                    'attr': {
-                        'class': 'w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500'
-                    }
-                }) }}
-            </div>
 
             <div>
                 {{ form_widget(form.save, {
@@ -89,25 +77,29 @@
 
             <hr class="my-10 border-gray-300 dark:border-gray-700">
 
-            <h4 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Существующие поля:</h4>
+            <h4 class="text-xl font-semibold text-gray-800 dark:text-white mb-4 flex justify-between items-center">
+                Существующие поля:
+                <a href="{{ path('form_template_view', { id: formTemplate.id }) }}"
+                   class="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium">
+                    🔍 Посмотреть форму
+                </a>
+            </h4>
 
             {% if fields is empty %}
                 <p class="text-gray-600 dark:text-gray-400">Нет добавленных полей.</p>
             {% else %}
-                <ul class="space-y-3">
-                    {% for field in fields %}
-                        <li class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm">
+                <ul id="sortable-fields" class="space-y-3" data-reorder-url="{{ path('form_field_reorder', { id: formTemplate.id }) }}">
+                {% for field in fields %}
+                        <li data-id="{{ field.id }}" class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm cursor-move">
                             <div class="flex justify-between items-center">
                                 <div>
                                     <strong class="text-gray-900 dark:text-white">{{ field.label }}</strong>
                                     <span class="text-sm text-gray-500 dark:text-gray-400">({{ field.type }})</span>
                                 </div>
-                                <div class="flex space-x-4">
-                                    <a href="{{ path('form_field_update', { id: field.id }) }}"
-                                       class="text-purple-600 hover:underline font-medium text-sm">Редактировать</a>
-                                    <a href="{{ path('form_template_view', { id: formTemplate.id }) }}"
-                                       class="text-blue-600 hover:underline font-medium text-sm">Посмотреть</a>
-                                </div>
+                                <a href="{{ path('form_field_update', { id: field.id }) }}"
+                                   class="text-purple-600 dark:text-purple-400 hover:underline font-medium text-sm">
+                                    ✏️ Редактировать
+                                </a>
                             </div>
                         </li>
                     {% endfor %}
@@ -115,4 +107,8 @@
             {% endif %}
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="{{ asset('js/sortable-fields.js') }}"></script>
+
 {% endblock %}

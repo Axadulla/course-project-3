@@ -1,8 +1,8 @@
 <?php
-
 namespace App\Repository;
 
 use App\Entity\FormField;
+use App\Entity\FormTemplate;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,28 +16,13 @@ class FormFieldRepository extends ServiceEntityRepository
         parent::__construct($registry, FormField::class);
     }
 
-//    /**
-//     * @return FormField[] Returns an array of FormField objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('f')
-//            ->andWhere('f.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('f.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?FormField
-//    {
-//        return $this->createQueryBuilder('f')
-//            ->andWhere('f.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findByTemplateOrdered(FormTemplate $template): array
+    {
+        return $this->createQueryBuilder('f')
+            ->where('f.formTemplate = :template')
+            ->setParameter('template', $template)
+            ->orderBy('f.order', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

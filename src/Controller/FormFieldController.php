@@ -9,11 +9,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Entity\FormTemplate;
+use App\Repository\FormFieldRepository;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Security\Csrf\CsrfToken;
 
 final class FormFieldController extends AbstractController
 {
     #[Route('/form-field/{id}/edit', name: 'form_field_update')]
-    public function updateField(FormField $field, Request $request, EntityManagerInterface $em): Response
+    public function updateField(FormField $field, Request $request, EntityManagerInterface $em, FormFieldRepository $fieldRepo): Response
     {
 
         $field->setOptionsRaw($field->getOptions() ? implode(', ', $field->getOptions()) : '');
@@ -22,7 +27,7 @@ final class FormFieldController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            // Обновляем поле options из optionsRaw
+
             $raw = $field->getOptionsRaw();
             $options = null;
 
@@ -43,8 +48,49 @@ final class FormFieldController extends AbstractController
             'form' => $form->createView(),
             'field' => $field,
             'formTemplate' => $field->getFormTemplate(),
-            'fields' => $field->getFormTemplate()->getFields(),
+            'fields' => $fieldRepo->findByTemplateOrdered($field->getFormTemplate()),
         ]);
     }
+
+    #[Route('/form/{id}/reorder', name: 'form_field_reorder', methods: ['POST'])]
+    public function reorderFields(
+        Request $request,
+        FormTemplate $formTemplate,
+        FormFieldRepository $fieldRepo,
+        EntityManagerInterface $em,
+        CsrfTokenManagerInterface $csrfTokenManager
+    ): JsonResponse {
+        $token = $request->headers->get('X-CSRF-TOKEN');
+        if (!$csrfTokenManager->isTokenValid(new CsrfToken('reorder_fields', $token))) {
+            return new JsonResponse(['status' => 'error', 'message' => 'Invalid CSRF token'], 403);
+        }
+
+        $data = json_decode($request->getContent(), true);
+
+        foreach ($data['order'] as $item) {
+            $field = $fieldRepo->find($item['id']);
+            if ($field && $field->getFormTemplate() === $formTemplate) {
+                 $field->setOrder($item['position']);
+            }
+        }
+
+        $em->flush();
+
+        foreach ($data['order'] as $item) {
+            $field = $fieldRepo->find($item['id']);
+            if ($field && $field->getFormTemplate() === $formTemplate) {
+                $field->setOrder($item['position']);
+                dump("Set {$item['position']} to #{$item['id']}");
+            }
+        }
+        $em->flush();
+
+
+        return new JsonResponse(['status' => 'success']);
+
+
+    }
+
+
 
 }

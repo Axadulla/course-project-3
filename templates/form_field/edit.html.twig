@@ -24,9 +24,11 @@
             {% if fields is empty %}
                 <p class="text-gray-600 dark:text-gray-400">Нет добавленных полей.</p>
             {% else %}
-                <ul class="space-y-3">
+                <ul id="sortable-fields" class="space-y-3"
+                    data-reorder-url="{{ path('form_field_reorder', { id: formTemplate.id }) }}">
                     {% for field in fields %}
-                        <li class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm">
+                        <li data-id="{{ field.id }}"
+                            class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600 shadow-sm">
                             <span class="text-gray-900 dark:text-white font-medium">{{ field.label }}</span>
                             <span class="text-sm text-gray-500 dark:text-gray-300">({{ field.type }})</span>
                         </li>
@@ -35,4 +37,7 @@
             {% endif %}
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="{{ asset('js/sortable-fields.js') }}"></script>
 {% endblock %}
