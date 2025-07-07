@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Результаты поиска{% endblock %}
+
+{% block body %}
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold mb-6 dark:text-white">Результаты поиска</h1>
+
+        {% if results is empty %}
+            <p class="text-gray-600 dark:text-gray-300">Ничего не найдено по запросу: <strong>{{ query }}</strong></p>
+        {% else %}
+            <p class="text-gray-700 dark:text-gray-300 mb-4">Найдено {{ results|length }} форм(ы) по запросу: <strong>{{ query }}</strong></p>
+
+            <ul class="space-y-4">
+                {% for form in results %}
+                    <li class="bg-white dark:bg-gray-800 p-4 rounded shadow">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h2 class="text-xl font-semibold dark:text-white">{{ form.title }}</h2>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                    {% if form.isPublic %}
+                                        🌐 Публичная форма
+                                    {% else %}
+                                        🔒 Приватная форма
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <a href="{{ path('form_template_view', {id: form.id}) }}"
+                               class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded transition">
+                                Посмотреть
+                            </a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+{% endblock %}
