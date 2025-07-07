@@ -15,9 +15,7 @@
 /.phpunit.cache/
 ###< phpunit/phpunit ###
 
-###> symfony/asset-mapper ###
-/public/assets/
-###< symfony/asset-mapper ###
+
 # IDE / Editor files
 *.swp
 *.swo
