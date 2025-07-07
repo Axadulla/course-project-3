@@ -31,6 +31,7 @@ final class FormTemplateController extends AbstractController
             ->getForm();
 
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($formTemplate);
             $em->flush();
@@ -199,6 +200,29 @@ final class FormTemplateController extends AbstractController
             'formTemplate' => $formTemplate,
         ]);
     }
+
+    #[Route('/form-template/search', name: 'form_template_search')]
+    public function search(
+        Request $request,
+        FormTemplateRepository $formTemplateRepository
+    ): Response {
+        $query = $request->query->get('q', '');
+        $user = $this->getUser();
+
+        $results = $formTemplateRepository->searchByTitle(
+            $query,
+            $user,
+            $this->isGranted('ROLE_SUPER_ADMIN')
+        );
+
+        return $this->render('form_templates/search.html.twig', [
+            'query' => $query,
+            'results' => $results,
+        ]);
+    }
+
+
+
 
 
 
