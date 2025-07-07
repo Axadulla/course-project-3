@@ -60,7 +60,7 @@
 {% if not hideLayout %}
 
 
-    <header class="bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-8 py-4 shadow flex justify-between items-center">
+    <header class="bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-8 py-4 shadow flex justify-between items-center flex-wrap gap-4">
         <div class="flex items-center">
             <img src="https://imgs.search.brave.com/XugoN8LnUUCJ5uiXqu9N2-VLs26dPjZTwumh42jt-PU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tYWls/bWV0ZW9yLmNvbS9s/b2dvcy9hc3NldHMv/UE5HL0dvb2dsZV9G/b3Jtc19Mb2dvXzUx/MnB4LnBuZw"
                  alt="Forms Logo"
@@ -68,8 +68,27 @@
             <a href="{{ path('app_home') }}" class="text-2xl font-bold no-underline">Forms</a>
         </div>
 
+        <form method="get"
+              action="{{ path('form_template_search') }}"
+              class="flex items-center flex-1 max-w-lg mx-4 shadow-md rounded overflow-hidden border border-gray-300 dark:border-gray-700">
+            <input type="text"
+                   name="q"
+                   placeholder="Search forms..."
+                   class="flex-1 px-4 py-2 text-base dark:bg-gray-700 dark:text-white focus:outline-none bg-white text-gray-900 dark:placeholder-gray-400"
+                   value="{{ app.request.query.get('q') }}">
+            <button type="submit"
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-5 py-2 transition-all duration-200 dark:bg-indigo-500 dark:hover:bg-indigo-600 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"/>
+                </svg>
+                <span class="hidden sm:inline">Поиск</span>
+            </button>
+        </form>
+
+
         <nav>
-            <ul class="flex gap-6 items-center text-[16px] font-medium">
+            <ul class="flex gap-6 items-center text-[16px] font-medium flex-wrap">
                 <li>
                     <button id="theme-toggle" class="p-2 rounded bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-black dark:text-white transition">
                         <span id="theme-icon">🌞</span>
@@ -77,31 +96,45 @@
                 </li>
                 <li>
                     <a href="{{ path('app_home') }}" class="relative inline-block px-2 py-1 after:block after:h-0.5 after:bg-indigo-500 after:scale-x-0 after:transition-transform after:duration-300 after:origin-left hover:after:scale-x-100 hover:bg-indigo-50 dark:hover:bg-indigo-700 rounded">
-                        🏠 Главная
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                        </svg>
+                        Главная
                     </a>
                 </li>
                 <li>
                     <a href="{{ path('form_template_index') }}" class="relative inline-block px-2 py-1 after:block after:h-0.5 after:bg-indigo-500 after:scale-x-0 after:transition-transform after:duration-300 after:origin-left hover:after:scale-x-100 hover:bg-indigo-50 dark:hover:bg-indigo-700 rounded">
-                        📋 Все формы
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 12h6m-6 4h6m2 4H7a2 2 0 01-2-2V6a2 2 0 012-2h2l1-1h4l1 1h2a2 2 0 012 2v12a2 2 0 01-2 2z"/>
+                        </svg>
+                        Все формы
                     </a>
                 </li>
-
                 {% if is_granted('ROLE_SUPER_ADMIN') %}
                     <li>
-                        <a href="{{ path('admin') }}" class="relative inline-block px-2 py-1 after:block after:h-0.5 after:bg-indigo-500 after:scale-x-0 after:transition-transform after:duration-300 after:origin-left hover:after:scale-x-100 hover:bg-indigo-50 dark:hover:bg-indigo-800 rounded ">
+                        <a href="{{ path('admin') }}" class="relative inline-block px-2 py-1 after:block after:h-0.5 after:bg-indigo-500 after:scale-x-0 after:transition-transform after:duration-300 after:origin-left hover:after:scale-x-100 hover:bg-indigo-50 dark:hover:bg-indigo-800 rounded">
                             Admin panel
                         </a>
                     </li>
                 {% endif %}
-
                 {% if app.user %}
                     <li>
                         <a href="{{ path('user_profile') }}" class="relative inline-block px-2 py-1 after:block after:h-0.5 after:bg-indigo-500 after:scale-x-0 after:transition-transform after:duration-300 after:origin-left hover:after:scale-x-100 hover:bg-indigo-50 dark:hover:bg-indigo-700 rounded">
-                            👤 {{ app.user.email }}
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M5.121 17.804A8 8 0 1118.879 6.196M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            {{ app.user.email }}
                         </a>
                     </li>
                     <li>
                         <a href="{{ path('app_logout') }}" class="relative inline-block px-2 py-1 after:block after:h-0.5 after:bg-red-500 after:scale-x-0 after:transition-transform after:duration-300 after:origin-left hover:after:scale-x-100 hover:bg-red-50 dark:hover:bg-red-800 rounded text-red-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/>
+                            </svg>
                             Logout
                         </a>
                     </li>
