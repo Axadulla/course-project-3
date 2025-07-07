@@ -97,7 +97,7 @@ final class FormTemplateController extends AbstractController
     {
         $user = $this->getUser();
 
-        if (!$formTemplate->isPublic() && $formTemplate->getOwner() !== $user) {
+        if (!$formTemplate->isPublic() && $formTemplate->getOwner() !== $user && !$this->isGranted('ROLE_SUPER_ADMIN')) {
             throw $this->createAccessDeniedException();
         }
 
