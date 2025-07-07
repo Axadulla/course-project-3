@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\FormTemplate;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\User;
+
 
 /**
  * @extends ServiceEntityRepository<FormTemplate>
@@ -16,28 +18,23 @@ class FormTemplateRepository extends ServiceEntityRepository
         parent::__construct($registry, FormTemplate::class);
     }
 
-//    /**
-//     * @return FormTemplate[] Returns an array of FormTemplate objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('f')
-//            ->andWhere('f.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('f.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
 
-//    public function findOneBySomeField($value): ?FormTemplate
-//    {
-//        return $this->createQueryBuilder('f')
-//            ->andWhere('f.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function searchByTitle(string $query, User $user, bool $isSuperAdmin = false): array
+    {
+        $qb = $this->createQueryBuilder('f')
+            ->where('LOWER(f.title) LIKE :query')
+            ->setParameter('query', '%' . mb_strtolower($query) . '%');
+
+        if (!$isSuperAdmin) {
+            $qb->andWhere('f.owner = :user OR f.isPublic = true')
+                ->setParameter('user', $user);
+        }
+
+        return $qb->orderBy('f.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+
+
 }
