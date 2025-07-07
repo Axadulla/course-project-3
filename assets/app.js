@@ -7,4 +7,13 @@ import './bootstrap.js';
  */
 import './styles/app.css';
 
-console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
+document.addEventListener('turbo:load', () => {
+    const toggleBtn = document.getElementById('menu-toggle');
+    const menuWrapper = document.getElementById('menu-wrapper');
+
+    if (!toggleBtn || !menuWrapper) return;
+
+    toggleBtn.addEventListener('click', () => {
+        menuWrapper.classList.toggle('hidden');
+    });
+});
