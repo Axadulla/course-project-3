@@ -3,41 +3,40 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-    <div class="min-h-screen flex items-center justify-center bg-gray-100">
-        <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-            <h1 class="text-2xl font-bold mb-6 text-center text-purple-700">Create your account</h1>
+    <div class="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-4">
+        <div class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-lg shadow-md w-full max-w-md">
+            <h1 class="text-2xl font-bold mb-6 text-center text-purple-700 dark:text-purple-400">Create your account</h1>
 
             {{ form_start(registrationForm) }}
 
             <div class="mb-4">
-                <label class="block text-gray-700 font-medium mb-1">Email</label>
+                <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Email</label>
                 {{ form_errors(registrationForm.email) }}
                 <input
                     type="email"
                     name="registration_form[email]"
                     value="{{ registrationForm.email.vars.value }}"
                     placeholder="you@example.com"
-                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
                     required
                 >
             </div>
 
             <div class="mb-4">
-                <label class="block text-gray-700 font-medium mb-1">Password</label>
+                <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1">Password</label>
                 {{ form_errors(registrationForm.plainPassword) }}
                 <input
                     type="password"
                     name="registration_form[plainPassword]"
                     placeholder="Password"
-                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
                     required
                 >
             </div>
 
-
             <div class="mb-4 flex items-center">
                 {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'mr-2'}}) }}
-                <label class="text-sm text-gray-700">I agree to the terms</label>
+                <label class="text-sm text-gray-700 dark:text-gray-300">I agree to the terms</label>
                 {{ form_errors(registrationForm.agreeTerms) }}
             </div>
 
@@ -45,16 +44,16 @@
 
             <button
                 type="submit"
-                class="w-full bg-purple-700 text-white py-2 px-4 rounded-lg hover:bg-purple-800 transition"
+                class="w-full bg-purple-700 dark:bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-800 dark:hover:bg-purple-700 transition"
             >
                 Register
             </button>
 
             {{ form_end(registrationForm, { 'render_rest': false }) }}
 
-            <div class="text-center mt-4 text-sm text-gray-600">
+            <div class="text-center mt-4 text-sm text-gray-600 dark:text-gray-400">
                 Already have an account?
-                <a href="{{ path('app_login') }}" class="text-purple-600 hover:underline">Login</a>
+                <a href="{{ path('app_login') }}" class="text-purple-600 dark:text-purple-400 hover:underline">Login</a>
             </div>
         </div>
     </div>
