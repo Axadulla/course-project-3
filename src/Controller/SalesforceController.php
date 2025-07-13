@@ -9,6 +9,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use GuzzleHttp\Client;
 use App\Entity\User;
+use GuzzleHttp\Exception\RequestException;
+use Psr\Log\LoggerInterface;
+
 
 
 class SalesforceController extends AbstractController
@@ -86,7 +89,7 @@ class SalesforceController extends AbstractController
 
 
     #[Route('/salesforce/submit', name: 'salesforce_submit', methods: ['POST'])]
-    public function submit(Request $request): Response
+    public function submit(Request $request, LoggerInterface $logger, int $id): Response
     {
         $company = $request->request->get('company');
         $fullName = $request->request->get('fullName');
@@ -135,24 +138,30 @@ class SalesforceController extends AbstractController
             ]);
 
             $this->addFlash('success', '✅ Данные успешно отправлены в Salesforce. Account и Contact созданы!');
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
-            $response = $e->getResponse();
-            $body = json_decode($response->getBody(), true);
-            $message = $body[0]['message'] ?? 'Неизвестная ошибка';
+        } catch (RequestException $e) {
+            if ($e->hasResponse()) {
+                $response = $e->getResponse();
+                $body = json_decode($response->getBody(), true);
+                $errorCode = $body[0]['errorCode'] ?? null;
+                $message = $body[0]['message'] ?? 'Неизвестная ошибка';
 
-            if (!empty($body[0]['errorCode']) && $body[0]['errorCode'] === 'DUPLICATES_DETECTED') {
-                $this->addFlash('error', '❌ Такой аккаунт или контакт уже существует в Salesforce.');
+                if ($errorCode === 'DUPLICATES_DETECTED') {
+                    $this->addFlash('error', '❌ Такой аккаунт или контакт уже существует в Salesforce.');
+                } else {
+                    $this->addFlash('error', '❌ Ошибка Salesforce: ' . $message);
+                }
+
+                $logger->error('Salesforce ошибка: ' . $response->getBody());
             } else {
-                $this->addFlash('error', '❌ Ошибка Salesforce: ' . $message);
+                $this->addFlash('error', '❌ Ошибка запроса к Salesforce (без ответа): ' . $e->getMessage());
+                $logger->error('Ошибка запроса к Salesforce: ' . $e->getMessage());
             }
-
-            $this->get('logger')->error('Salesforce ошибка: ' . $response->getBody());
         } catch (\Throwable $e) {
             $this->addFlash('error', '❌ Неизвестная ошибка при отправке в Salesforce.');
-            $this->get('logger')->error('Общая ошибка Salesforce: ' . $e->getMessage());
+            $logger->error('Общая ошибка Salesforce: ' . $e->getMessage());
         }
 
-        return $this->redirectToRoute('salesforce_form', ['id' => $this->getUser()->getId()]);
+        return $this->redirectToRoute('salesforce_form', ['id' => $id]);
     }
 
 }
