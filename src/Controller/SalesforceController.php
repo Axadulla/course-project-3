@@ -89,7 +89,7 @@ class SalesforceController extends AbstractController
 
 
     #[Route('/salesforce/submit', name: 'salesforce_submit', methods: ['POST'])]
-    public function submit(Request $request, LoggerInterface $logger, int $id): Response
+    public function submit(Request $request, LoggerInterface $logger): Response
     {
         $company = $request->request->get('company');
         $fullName = $request->request->get('fullName');
@@ -161,7 +161,7 @@ class SalesforceController extends AbstractController
             $logger->error('Общая ошибка Salesforce: ' . $e->getMessage());
         }
 
-        return $this->redirectToRoute('salesforce_form', ['id' => $id]);
+        return $this->redirectToRoute('salesforce_form', ['id' => $this->getUser()->getId()]);
     }
 
 }
