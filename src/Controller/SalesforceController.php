@@ -100,7 +100,7 @@ class SalesforceController extends AbstractController
 
         if (!$accessToken || !$instanceUrl) {
             $this->addFlash('error', '❌ Нет токена авторизации. Сначала подключитесь к Salesforce.');
-            return $this->redirectToRoute('salesforce_form');
+            return $this->redirectToRoute('salesforce_form', ['id' => $this->getUser()->getId()]);
         }
 
         $parts = explode(' ', $fullName);
@@ -122,7 +122,6 @@ class SalesforceController extends AbstractController
                     'Phone' => $phone,
                 ]
             ]);
-
             $accountId = json_decode($accountResponse->getBody(), true)['id'];
 
             $client->post($instanceUrl . '/services/data/v60.0/sobjects/Contact', [
@@ -135,14 +134,27 @@ class SalesforceController extends AbstractController
                 ]
             ]);
 
-
             $this->addFlash('success', '✅ Данные успешно отправлены в Salesforce. Account и Contact созданы!');
-        } catch (\Exception $e) {
-            $this->addFlash('error', 'Ошибка при создании записей в Salesforce: ' . $e->getMessage());
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $response = $e->getResponse();
+            $body = json_decode($response->getBody(), true);
+            $message = $body[0]['message'] ?? 'Неизвестная ошибка';
+
+            if (!empty($body[0]['errorCode']) && $body[0]['errorCode'] === 'DUPLICATES_DETECTED') {
+                $this->addFlash('error', '❌ Такой аккаунт или контакт уже существует в Salesforce.');
+            } else {
+                $this->addFlash('error', '❌ Ошибка Salesforce: ' . $message);
+            }
+
+            $this->get('logger')->error('Salesforce ошибка: ' . $response->getBody());
+        } catch (\Throwable $e) {
+            $this->addFlash('error', '❌ Неизвестная ошибка при отправке в Salesforce.');
+            $this->get('logger')->error('Общая ошибка Salesforce: ' . $e->getMessage());
         }
 
-        return $this->redirectToRoute('salesforce_form');
+        return $this->redirectToRoute('salesforce_form', ['id' => $this->getUser()->getId()]);
     }
+
 }
 
 
