@@ -18,7 +18,8 @@
             {% else %}
                 <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {% for form in forms %}
-                        <div class="bg-white dark:bg-gray-700 rounded-xl shadow p-5 flex flex-col justify-between h-full">
+                        <div
+                            class="bg-white dark:bg-gray-700 rounded-xl shadow p-5 flex flex-col justify-between h-full">
                             <div>
                                 <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-1">{{ form.title }}</h2>
                                 <p class="text-sm text-gray-600 dark:text-gray-300 mb-3">
@@ -33,6 +34,12 @@
                                     <span>Обновлено:</span>
                                     {{ form.updatedAt ? form.updatedAt|date('d.m.Y H:i') : '—' }}
                                 </div>
+                                {% if is_granted('ROLE_SUPER_ADMIN') %}
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                                        <span>Автор:</span>
+                                        {{ form.owner.email }}
+                                    </div>
+                                {% endif %}
                             </div>
 
                             <div class="mt-4 flex flex-wrap gap-3">
@@ -47,10 +54,12 @@
                                           action="{{ path('form_template_delete', { id: form.id }) }}"
                                           class="inline"
                                           onsubmit="return confirm('Вы уверены, что хотите удалить эту форму?');">
-                                        <input type="hidden" name="_token" value="{{ csrf_token('delete_form_' ~ form.id) }}">
+                                        <input type="hidden" name="_token"
+                                               value="{{ csrf_token('delete_form_' ~ form.id) }}">
                                         <button type="submit"
                                                 class="text-sm text-red-600 dark:text-red-400 hover:underline bg-transparent border-none p-0 m-0"
-                                                style="cursor:pointer;">Удалить</button>
+                                                style="cursor:pointer;">Удалить
+                                        </button>
                                     </form>
                                 {% endif %}
                             </div>

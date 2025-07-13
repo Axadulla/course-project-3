@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Salesforce Integration{% endblock %}
+
+{% block body %}
+    <div class="max-w-xl mx-auto mt-10 p-6 bg-white dark:bg-gray-800 rounded shadow">
+        <h1 class="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-white">
+            Отправка данных в Salesforce
+        </h1>
+
+        <form action="{{ path('salesforce_submit') }}" method="post">
+            {% set fields = [
+                { name: 'company', label: 'Название компании', type: 'text' },
+                { name: 'fullName', label: 'Полное имя', type: 'text' },
+                { name: 'phone', label: 'Телефон', type: 'text' },
+                { name: 'email', label: 'Email', type: 'email', value: user.email },
+                { name: 'city', label: 'Город', type: 'text' }
+            ] %}
+
+            {% for field in fields %}
+                <div class="mb-4">
+                    <label for="{{ field.name }}" class="block text-gray-700 dark:text-gray-300">
+                        {{ field.label }}
+                    </label>
+                    <input
+                        type="{{ field.type }}"
+                        name="{{ field.name }}"
+                        id="{{ field.name }}"
+                        required
+                        value="{{ field.value | default('') }}"
+                        class="w-full p-2 border rounded dark:bg-gray-700 dark:text-white">
+                </div>
+            {% endfor %}
+
+            <button type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Отправить в Salesforce
+            </button>
+        </form>
+
+        {% set flashClasses = {
+            'success': 'bg-green-100 text-green-800 dark:bg-green-700',
+            'error': 'bg-red-100 text-red-800 dark:bg-red-700'
+        } %}
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="mt-4 p-3 {{ flashClasses[label]|default('bg-gray-100 text-gray-800') }}
+                            dark:text-white rounded">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endblock %}
