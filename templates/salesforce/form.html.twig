@@ -8,6 +8,20 @@
             Отправка данных в Salesforce
         </h1>
 
+        {% set flashClasses = {
+            'success': 'bg-green-100 text-green-800 dark:bg-green-700',
+            'error': 'bg-red-100 text-red-800 dark:bg-red-700'
+        } %}
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="mt-4 p-3 {{ flashClasses[label]|default('bg-gray-100 text-gray-800') }}
+                            dark:text-white rounded">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
         <form action="{{ path('salesforce_submit') }}" method="post">
         {% set fields = [
                 { name: 'company', label: 'Название компании', type: 'text' },
@@ -38,18 +52,5 @@
             </button>
         </form>
 
-        {% set flashClasses = {
-            'success': 'bg-green-100 text-green-800 dark:bg-green-700',
-            'error': 'bg-red-100 text-red-800 dark:bg-red-700'
-        } %}
-
-        {% for label, messages in app.flashes %}
-            {% for message in messages %}
-                <div class="mt-4 p-3 {{ flashClasses[label]|default('bg-gray-100 text-gray-800') }}
-                            dark:text-white rounded">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endfor %}
     </div>
 {% endblock %}

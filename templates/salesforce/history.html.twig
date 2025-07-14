@@ -1,20 +1,72 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Hello SalesforceController!{% endblock %}
+{% block title %}История отправок в Salesforce{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="max-w-5xl mx-auto mt-10 bg-white dark:bg-gray-800 p-6 rounded shadow">
+        <h1 class="text-2xl mb-6 text-gray-800 dark:text-white">📄 История отправок</h1>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+        <form method="post" action="{{ path('salesforce_bulk_action') }}" id="bulk-action-form">
+            <table class="w-full table-auto border-collapse">
+                <thead>
+                <tr class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white">
+                    <th class="p-2"><input type="checkbox" id="select-all" /></th>
+                    <th class="p-2 text-left">Компания</th>
+                    <th class="p-2 text-left">Имя</th>
+                    <th class="p-2 text-left">Email</th>
+                    <th class="p-2 text-left">Город</th>
+                    <th class="p-2 text-left">Дата</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for submission in submissions %}
+                    <tr class="border-b border-gray-300 dark:border-gray-600">
+                        <td class="p-2">
+                            <input type="checkbox" name="ids[]" value="{{ submission.id }}">
+                        </td>
+                        <td class="p-2">{{ submission.company }}</td>
+                        <td class="p-2">{{ submission.fullName }}</td>
+                        <td class="p-2">{{ submission.email }}</td>
+                        <td class="p-2">{{ submission.city }}</td>
+                        <td class="p-2">{{ submission.createdAt|date('d.m.Y H:i') }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="p-4 text-center text-gray-500 dark:text-gray-300">Нет отправок</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/Victus/OneDrive/Рабочий стол/courseproject3/src/Controller/SalesforceController.php</code></li>
-        <li>Your template at <code>C:/Users/Victus/OneDrive/Рабочий стол/courseproject3/templates/salesforce/index.html.twig</code></li>
-    </ul>
-</div>
+            <div class="mt-6 flex gap-4">
+                <button type="submit" name="action" value="delete"
+                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+                    🗑️ Удалить выбранные
+                </button>
+                <button type="submit" name="action" value="edit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                    ✏️ Редактировать выбранную
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('select-all').addEventListener('change', function (e) {
+            const checkboxes = document.querySelectorAll('input[name="ids[]"]');
+            checkboxes.forEach(cb => cb.checked = e.target.checked);
+        });
+
+        document.getElementById('bulk-action-form').addEventListener('submit', function (e) {
+            const checked = document.querySelectorAll('input[name="ids[]"]:checked');
+            const action = e.submitter.value;
+
+            if (action === 'edit' && checked.length !== 1) {
+                e.preventDefault();
+                alert('Для редактирования выберите только одну запись.');
+            } else if (action === 'delete' && checked.length === 0) {
+                e.preventDefault();
+                alert('Выберите хотя бы одну запись для удаления.');
+            }
+        });
+    </script>
 {% endblock %}
