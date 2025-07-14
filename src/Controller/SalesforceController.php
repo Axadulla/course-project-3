@@ -225,7 +225,6 @@ class SalesforceController extends AbstractController
                 }
             }
             $em->flush();
-            $this->addFlash('success', '✅ Записи удалены.');
         } elseif ($action === 'edit') {
             return $this->redirectToRoute('salesforce_edit', ['id' => $ids[0]]);
         }
@@ -244,7 +243,6 @@ class SalesforceController extends AbstractController
         $em->remove($submission);
         $em->flush();
 
-        $this->addFlash('success', '✅ Запись успешно удалена.');
         return $this->redirectToRoute('salesforce_history', ['id' => $this->getUser()->getId()]);
     }
 
@@ -264,7 +262,6 @@ class SalesforceController extends AbstractController
             $submission->setCity($request->request->get('city'));
             $em->flush();
 
-            $this->addFlash('success', '✅ Запись обновлена.');
             return $this->redirectToRoute('salesforce_history', ['id' => $this->getUser()->getId()]);
         }
 
