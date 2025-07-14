@@ -11,12 +11,18 @@
                 <div class="space-y-2 text-gray-700 dark:text-gray-300">
                     <p><span class="font-semibold">Email:</span> {{ user.email }}</p>
                     <p><span class="font-semibold">Роли:</span> {{ user.roles|join(', ') }}</p>
-                    <p><a href="{{ path('salesforce_connect', {'redirectTo': path('salesforce_form', {'id': app.user.id}) }) }}"
-                          class="block w-full text-center mb-6 bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="{{ path('salesforce_connect', {'redirectTo': path('salesforce_form', {'id': app.user.id}) }) }}"
+                           class="block w-full sm:w-auto text-center bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">
                             🔐 Подключиться к Salesforce
                         </a>
 
-                    </p>
+                        <a href="{{ path('salesforce_history', { id: app.user.id }) }}"
+                           class="block w-full sm:w-auto text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            📄 История отправок в Salesforce
+                        </a>
+                    </div>
+
                 </div>
             </div>
 
