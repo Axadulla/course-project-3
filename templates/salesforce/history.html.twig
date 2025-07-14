@@ -5,6 +5,20 @@
     <div class="max-w-5xl mx-auto mt-10 bg-white dark:bg-gray-800 p-6 rounded shadow">
         <h1 class="text-2xl mb-6 text-gray-800 dark:text-white">📄 История отправок</h1>
 
+        {% set flashClasses = {
+            'success': 'bg-green-100 text-green-800 dark:bg-green-700',
+            'error': 'bg-red-100 text-red-800 dark:bg-red-700'
+        } %}
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="mt-4 p-3 {{ flashClasses[label]|default('bg-gray-100 text-gray-800') }}
+                            dark:text-white rounded">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
         <form method="post" action="{{ path('salesforce_bulk_action') }}" id="bulk-action-form">
             <table class="w-full table-auto border-collapse">
                 <thead>

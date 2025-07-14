@@ -199,9 +199,13 @@ class SalesforceController extends AbstractController
     #[Route('/user/{id}/salesforce/history', name: 'salesforce_history')]
     public function history(User $user, SalesforceSubmissionRepository $repo): Response
     {
-        if (!in_array('ROLE_ADMIN', $this->getUser()->getRoles(), true) && $user !== $this->getUser()) {
+        if (
+            $user !== $this->getUser() &&
+            !$this->isGranted('ROLE_SUPER_ADMIN')
+        ) {
             throw $this->createAccessDeniedException();
         }
+
 
         $submissions = $repo->findBy(['user' => $user], ['createdAt' => 'DESC']);
 
@@ -223,6 +227,7 @@ class SalesforceController extends AbstractController
         }
 
         $repo = $em->getRepository(SalesforceSubmission::class);
+        $targetUser = $this->getUser();
 
         if ($action === 'delete') {
             $session = $request->getSession();
@@ -238,8 +243,15 @@ class SalesforceController extends AbstractController
 
             foreach ($ids as $id) {
                 $submission = $repo->find($id);
-                if (!$submission || $submission->getUser() !== $this->getUser()) {
+                if (
+                    !$submission ||
+                    ($submission->getUser() !== $this->getUser() && !$this->isGranted('ROLE_SUPER_ADMIN'))
+                ) {
                     continue;
+                }
+
+                if ($targetUser === $this->getUser()) {
+                    $targetUser = $submission->getUser();
                 }
 
                 try {
@@ -251,7 +263,7 @@ class SalesforceController extends AbstractController
                         $client->delete($instanceUrl . '/services/data/v60.0/sobjects/Account/' . $submission->getSalesforceAccountId());
                     }
                 } catch (RequestException $e) {
-                     $this->addFlash('error', 'Ошибка при удалении из Salesforce: ' . $e->getMessage());
+                    $this->addFlash('error', 'Ошибка при удалении из Salesforce: ' . $e->getMessage());
                 }
 
                 $em->remove($submission);
@@ -265,16 +277,21 @@ class SalesforceController extends AbstractController
             return $this->redirectToRoute('salesforce_edit', ['id' => $ids[0]]);
         }
 
-        return $this->redirectToRoute('salesforce_history', ['id' => $this->getUser()->getId()]);
+        return $this->redirectToRoute('salesforce_history', ['id' => $targetUser->getId()]);
     }
 
 
     #[Route('/salesforce/delete/{id}', name: 'salesforce_delete', methods: ['POST'])]
     public function delete(SalesforceSubmission $submission, Request $request, EntityManagerInterface $em): Response
     {
-        if ($submission->getUser() !== $this->getUser() && !in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
+        if (
+            $submission->getUser() !== $this->getUser() &&
+            !$this->isGranted('ROLE_SUPER_ADMIN')
+        ) {
             throw $this->createAccessDeniedException();
         }
+
+
 
         $session = $request->getSession();
         $accessToken = $session->get('salesforce_access_token');
@@ -304,8 +321,10 @@ class SalesforceController extends AbstractController
         $em->remove($submission);
         $em->flush();
 
+        $targetUser = $submission->getUser();
+
         $this->addFlash('success', '✅ Запись и связанные объекты в Salesforce удалены.');
-        return $this->redirectToRoute('salesforce_history', ['id' => $this->getUser()->getId()]);
+        return $this->redirectToRoute('salesforce_history', ['id' => $targetUser->getId()]);
     }
 
 
@@ -313,13 +332,13 @@ class SalesforceController extends AbstractController
     #[Route('/salesforce/edit/{id}', name: 'salesforce_edit')]
     public function edit(Request $request, SalesforceSubmission $submission, EntityManagerInterface $em): Response
     {
-        if ($submission->getUser() !== $this->getUser() && !in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
+        if ($submission->getUser() !== $this->getUser() && !in_array('ROLE_SUPER_ADMIN', $this->getUser()->getRoles())) {
             throw $this->createAccessDeniedException();
         }
 
         if ($request->isMethod('POST')) {
             $company = $request->request->get('company');
-            $fullName = $request->request->get('fullName');
+            $fullName = trim($request->request->get('fullName'));
             $phone = $request->request->get('phone');
             $email = $request->request->get('email');
             $city = $request->request->get('city');
@@ -330,6 +349,23 @@ class SalesforceController extends AbstractController
             $submission->setEmail($email);
             $submission->setCity($city);
             $em->flush();
+
+            $parts = preg_split('/\s+/', $fullName);
+            $firstName = '';
+            $lastName = '';
+
+            if (count($parts) >= 2) {
+                $firstName = $parts[0];
+                $lastName = implode(' ', array_slice($parts, 1));
+            } elseif (count($parts) === 1) {
+                $lastName = $parts[0];
+            }
+
+            $lastName = trim($lastName);
+            if ($lastName === '') {
+                $lastName = 'Без имени';
+            }
+
 
             $session = $request->getSession();
             $accessToken = $session->get('salesforce_access_token');
@@ -342,10 +378,6 @@ class SalesforceController extends AbstractController
                         'Content-Type' => 'application/json'
                     ]
                 ]);
-
-                $parts = explode(' ', trim($fullName));
-                $firstName = $parts[0] ?? '';
-                $lastName = count($parts) >= 2 ? implode(' ', array_slice($parts, 1)) : '';
 
                 try {
                     if ($submission->getSalesforceAccountId()) {
@@ -374,8 +406,9 @@ class SalesforceController extends AbstractController
             }
 
             $this->addFlash('success', '✅ Данные успешно обновлены.');
-            return $this->redirectToRoute('salesforce_history', ['id' => $this->getUser()->getId()]);
+            return $this->redirectToRoute('salesforce_history', ['id' => $submission->getUser()->getId()]);
         }
+
 
         return $this->render('salesforce/edit.html.twig', [
             'submission' => $submission,
