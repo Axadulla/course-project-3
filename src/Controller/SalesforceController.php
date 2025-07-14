@@ -102,13 +102,11 @@ class SalesforceController extends AbstractController
         $accessToken = $session->get('salesforce_access_token');
         $instanceUrl = $session->get('salesforce_instance_url');
 
-        // 1. Проверка на наличие токена
         if (!$accessToken || !$instanceUrl) {
             $this->addFlash('error', '❌ Нет токена авторизации. Сначала подключитесь к Salesforce.');
             return $this->redirectToRoute('salesforce_form', ['id' => $this->getUser()->getId()]);
         }
 
-        // 2. Разделение имени
         $parts = explode(' ', trim($fullName));
         $firstName = '';
         $lastName = '';
@@ -120,7 +118,6 @@ class SalesforceController extends AbstractController
             $lastName = $parts[0];
         }
 
-        // 3. Обязательное наличие фамилии
         if (empty(trim($lastName))) {
             $this->addFlash('error', '❌ Пожалуйста, введите полное имя (имя и фамилия).');
             return $this->redirectToRoute('salesforce_form', ['id' => $this->getUser()->getId()]);
@@ -134,7 +131,6 @@ class SalesforceController extends AbstractController
         ]);
 
         try {
-            // 4. Создание аккаунта
             $accountResponse = $client->post($instanceUrl . '/services/data/v60.0/sobjects/Account', [
                 'json' => [
                     'Name' => $company,
@@ -144,7 +140,6 @@ class SalesforceController extends AbstractController
             ]);
             $accountId = json_decode($accountResponse->getBody(), true)['id'];
 
-            // 5. Создание контакта
             $client->post($instanceUrl . '/services/data/v60.0/sobjects/Contact', [
                 'json' => [
                     'FirstName' => $firstName,
@@ -155,7 +150,6 @@ class SalesforceController extends AbstractController
                 ]
             ]);
 
-            // 6. Сохраняем только если Salesforce успешен
             $submission = new SalesforceSubmission();
             $submission->setCompany($company);
             $submission->setFullName($fullName);
