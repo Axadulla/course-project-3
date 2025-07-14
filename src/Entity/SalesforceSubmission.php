@@ -36,6 +36,25 @@ class SalesforceSubmission
     #[ORM\Column]
     private ?\DateTime $createdAt = null;
 
+
+    #[ORM\Column(nullable: true)]
+    private ?string $salesforceAccountId = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?string $salesforceContactId = null;
+
+    public function getSalesforceAccountId(): ?string { return $this->salesforceAccountId; }
+    public function setSalesforceAccountId(?string $id): static {
+        $this->salesforceAccountId = $id;
+        return $this;
+    }
+
+    public function getSalesforceContactId(): ?string { return $this->salesforceContactId; }
+    public function setSalesforceContactId(?string $id): static {
+        $this->salesforceContactId = $id;
+        return $this;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

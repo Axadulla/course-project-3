@@ -140,7 +140,7 @@ class SalesforceController extends AbstractController
             ]);
             $accountId = json_decode($accountResponse->getBody(), true)['id'];
 
-            $client->post($instanceUrl . '/services/data/v60.0/sobjects/Contact', [
+            $contactResponse = $client->post($instanceUrl . '/services/data/v60.0/sobjects/Contact', [
                 'json' => [
                     'FirstName' => $firstName,
                     'LastName' => $lastName,
@@ -149,6 +149,7 @@ class SalesforceController extends AbstractController
                     'AccountId' => $accountId,
                 ]
             ]);
+            $contactId = json_decode($contactResponse->getBody(), true)['id'];
 
             $submission = new SalesforceSubmission();
             $submission->setCompany($company);
@@ -158,10 +159,14 @@ class SalesforceController extends AbstractController
             $submission->setCity($city);
             $submission->setUser($this->getUser());
             $submission->setCreatedAt(new \DateTime());
+            $submission->setSalesforceAccountId($accountId);
+            $submission->setSalesforceContactId($contactId);
+
             $em->persist($submission);
             $em->flush();
 
             return $this->redirectToRoute('salesforce_history', ['id' => $this->getUser()->getId()]);
+
         } catch (RequestException $e) {
             if ($e->hasResponse()) {
                 $response = $e->getResponse();
@@ -177,9 +182,10 @@ class SalesforceController extends AbstractController
 
                 $logger->error('Salesforce ошибка: ' . $response->getBody());
             } else {
-                $this->addFlash('error', '❌ Ошибка запроса к Salesforce (без ответа): ' . $e->getMessage());
+                $this->addFlash('error', '❌ Ошибка запроса к Salesforce: ' . $e->getMessage());
                 $logger->error('Ошибка запроса к Salesforce: ' . $e->getMessage());
             }
+
             return $this->redirectToRoute('salesforce_form', ['id' => $this->getUser()->getId()]);
         } catch (\Throwable $e) {
             $this->addFlash('error', '❌ Неизвестная ошибка при отправке в Salesforce.');
@@ -216,16 +222,46 @@ class SalesforceController extends AbstractController
             return $this->redirectToRoute('salesforce_history', ['id' => $this->getUser()->getId()]);
         }
 
+        $repo = $em->getRepository(SalesforceSubmission::class);
+
         if ($action === 'delete') {
-            $repo = $em->getRepository(SalesforceSubmission::class);
+            $session = $request->getSession();
+            $accessToken = $session->get('salesforce_access_token');
+            $instanceUrl = $session->get('salesforce_instance_url');
+
+            $client = new Client([
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $accessToken,
+                    'Content-Type' => 'application/json',
+                ]
+            ]);
+
             foreach ($ids as $id) {
                 $submission = $repo->find($id);
-                if ($submission && $submission->getUser() === $this->getUser()) {
-                    $em->remove($submission);
+                if (!$submission || $submission->getUser() !== $this->getUser()) {
+                    continue;
                 }
+
+                try {
+                    if ($submission->getSalesforceContactId()) {
+                        $client->delete($instanceUrl . '/services/data/v60.0/sobjects/Contact/' . $submission->getSalesforceContactId());
+                    }
+
+                    if ($submission->getSalesforceAccountId()) {
+                        $client->delete($instanceUrl . '/services/data/v60.0/sobjects/Account/' . $submission->getSalesforceAccountId());
+                    }
+                } catch (RequestException $e) {
+                     $this->addFlash('error', 'Ошибка при удалении из Salesforce: ' . $e->getMessage());
+                }
+
+                $em->remove($submission);
             }
+
             $em->flush();
-        } elseif ($action === 'edit') {
+            $this->addFlash('success', '✅ Записи удалены.');
+        }
+
+        if ($action === 'edit') {
             return $this->redirectToRoute('salesforce_edit', ['id' => $ids[0]]);
         }
 
@@ -234,17 +270,44 @@ class SalesforceController extends AbstractController
 
 
     #[Route('/salesforce/delete/{id}', name: 'salesforce_delete', methods: ['POST'])]
-    public function delete(SalesforceSubmission $submission, EntityManagerInterface $em): Response
+    public function delete(SalesforceSubmission $submission, Request $request, EntityManagerInterface $em): Response
     {
         if ($submission->getUser() !== $this->getUser() && !in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
             throw $this->createAccessDeniedException();
         }
 
+        $session = $request->getSession();
+        $accessToken = $session->get('salesforce_access_token');
+        $instanceUrl = $session->get('salesforce_instance_url');
+
+        if ($accessToken && $instanceUrl) {
+            $client = new \GuzzleHttp\Client([
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $accessToken,
+                    'Content-Type' => 'application/json'
+                ]
+            ]);
+
+            try {
+                if ($submission->getSalesforceContactId()) {
+                    $client->delete($instanceUrl . '/services/data/v60.0/sobjects/Contact/' . $submission->getSalesforceContactId());
+                }
+
+                if ($submission->getSalesforceAccountId()) {
+                    $client->delete($instanceUrl . '/services/data/v60.0/sobjects/Account/' . $submission->getSalesforceAccountId());
+                }
+            } catch (\Throwable $e) {
+                $this->addFlash('error', '⚠️ Не удалось удалить из Salesforce: ' . $e->getMessage());
+            }
+        }
+
         $em->remove($submission);
         $em->flush();
 
+        $this->addFlash('success', '✅ Запись и связанные объекты в Salesforce удалены.');
         return $this->redirectToRoute('salesforce_history', ['id' => $this->getUser()->getId()]);
     }
+
 
 
     #[Route('/salesforce/edit/{id}', name: 'salesforce_edit')]
@@ -255,13 +318,62 @@ class SalesforceController extends AbstractController
         }
 
         if ($request->isMethod('POST')) {
-            $submission->setCompany($request->request->get('company'));
-            $submission->setFullName($request->request->get('fullName'));
-            $submission->setPhone($request->request->get('phone'));
-            $submission->setEmail($request->request->get('email'));
-            $submission->setCity($request->request->get('city'));
+            $company = $request->request->get('company');
+            $fullName = $request->request->get('fullName');
+            $phone = $request->request->get('phone');
+            $email = $request->request->get('email');
+            $city = $request->request->get('city');
+
+            $submission->setCompany($company);
+            $submission->setFullName($fullName);
+            $submission->setPhone($phone);
+            $submission->setEmail($email);
+            $submission->setCity($city);
             $em->flush();
 
+            $session = $request->getSession();
+            $accessToken = $session->get('salesforce_access_token');
+            $instanceUrl = $session->get('salesforce_instance_url');
+
+            if ($accessToken && $instanceUrl) {
+                $client = new \GuzzleHttp\Client([
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . $accessToken,
+                        'Content-Type' => 'application/json'
+                    ]
+                ]);
+
+                $parts = explode(' ', trim($fullName));
+                $firstName = $parts[0] ?? '';
+                $lastName = count($parts) >= 2 ? implode(' ', array_slice($parts, 1)) : '';
+
+                try {
+                    if ($submission->getSalesforceAccountId()) {
+                        $client->patch($instanceUrl . '/services/data/v60.0/sobjects/Account/' . $submission->getSalesforceAccountId(), [
+                            'json' => [
+                                'Name' => $company,
+                                'BillingCity' => $city,
+                                'Phone' => $phone,
+                            ]
+                        ]);
+                    }
+
+                    if ($submission->getSalesforceContactId()) {
+                        $client->patch($instanceUrl . '/services/data/v60.0/sobjects/Contact/' . $submission->getSalesforceContactId(), [
+                            'json' => [
+                                'FirstName' => $firstName,
+                                'LastName' => $lastName,
+                                'Phone' => $phone,
+                                'Email' => $email,
+                            ]
+                        ]);
+                    }
+                } catch (\Throwable $e) {
+                    $this->addFlash('error', '⚠️ Не удалось обновить данные в Salesforce: ' . $e->getMessage());
+                }
+            }
+
+            $this->addFlash('success', '✅ Данные успешно обновлены.');
             return $this->redirectToRoute('salesforce_history', ['id' => $this->getUser()->getId()]);
         }
 
