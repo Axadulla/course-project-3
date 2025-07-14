@@ -2,8 +2,8 @@
 {% block title %}История отправок в Salesforce{% endblock %}
 
 {% block body %}
-    <div class="max-w-5xl mx-auto mt-10 bg-white dark:bg-gray-800 p-6 rounded shadow">
-        <h1 class="text-2xl mb-6 text-gray-800 dark:text-white">📄 История отправок</h1>
+    <div class="max-w-5xl mx-auto mt-10 bg-white dark:bg-gray-800 p-4 sm:p-6 rounded shadow">
+        <h1 class="text-2xl mb-4 sm:mb-6 text-gray-800 dark:text-white">📄 История отправок</h1>
 
         {% set flashClasses = {
             'success': 'bg-green-100 text-green-800 dark:bg-green-700',
@@ -20,44 +20,68 @@
         {% endfor %}
 
         <form method="post" action="{{ path('salesforce_bulk_action') }}" id="bulk-action-form">
-            <table class="w-full table-auto border-collapse">
-                <thead>
-                <tr class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white">
-                    <th class="p-2"><input type="checkbox" id="select-all" /></th>
-                    <th class="p-2 text-left">Компания</th>
-                    <th class="p-2 text-left">Имя</th>
-                    <th class="p-2 text-left">Email</th>
-                    <th class="p-2 text-left">Город</th>
-                    <th class="p-2 text-left">Дата</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for submission in submissions %}
-                    <tr class="border-b border-gray-300 dark:border-gray-600">
-                        <td class="p-2">
-                            <input type="checkbox" name="ids[]" value="{{ submission.id }}">
-                        </td>
-                        <td class="p-2">{{ submission.company }}</td>
-                        <td class="p-2">{{ submission.fullName }}</td>
-                        <td class="p-2">{{ submission.email }}</td>
-                        <td class="p-2">{{ submission.city }}</td>
-                        <td class="p-2">{{ submission.createdAt|date('d.m.Y H:i') }}</td>
+            <div class="hidden sm:block overflow-x-auto">
+                <table class="w-full table-auto border-collapse">
+                    <thead>
+                    <tr class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-white">
+                        <th class="p-2"><input type="checkbox" id="select-all"/></th>
+                        <th class="p-2 text-left">Компания</th>
+                        <th class="p-2 text-left">Имя</th>
+                        <th class="p-2 text-left">Email</th>
+                        <th class="p-2 text-left">Город</th>
+                        <th class="p-2 text-left">Дата</th>
                     </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="6" class="p-4 text-center text-gray-500 dark:text-gray-300">Нет отправок</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                    {% for submission in submissions %}
+                        <tr class="border-b border-gray-300 dark:border-gray-600">
+                            <td class="p-2">
+                                <input type="checkbox" name="ids[]" value="{{ submission.id }}">
+                            </td>
+                            <td class="p-2">{{ submission.company }}</td>
+                            <td class="p-2">{{ submission.fullName }}</td>
+                            <td class="p-2">{{ submission.email }}</td>
+                            <td class="p-2">{{ submission.city }}</td>
+                            <td class="p-2">{{ submission.createdAt|date('d.m.Y H:i') }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="p-4 text-center text-gray-500 dark:text-gray-300">Нет отправок</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
-            <div class="mt-6 flex gap-4">
+            <div class="block sm:hidden space-y-4">
+                {% for submission in submissions %}
+                    <div class="border rounded-lg p-4 bg-gray-50 dark:bg-gray-700 shadow-sm dark:border-gray-600">
+                        <div class="flex justify-between">
+                            <div class="text-sm text-gray-700 dark:text-gray-300">
+                                <div><strong>Компания:</strong> {{ submission.company }}</div>
+                                <div><strong>Имя:</strong> {{ submission.fullName }}</div>
+                                <div><strong>Email:</strong> {{ submission.email }}</div>
+                                <div><strong>Город:</strong> {{ submission.city }}</div>
+                                <div><strong>Дата:</strong> {{ submission.createdAt|date('d.m.Y H:i') }}</div>
+                            </div>
+                            <div class="pl-2">
+                                <input type="checkbox" name="ids[]" value="{{ submission.id }}"
+                                       class="form-checkbox text-blue-600 mt-1">
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-center text-gray-500 dark:text-gray-300">Нет отправок</p>
+                {% endfor %}
+            </div>
+
+            <div class="mt-6 flex flex-col sm:flex-row gap-4">
                 <button type="submit" name="action" value="delete"
-                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm">
                     🗑️ Удалить выбранные
                 </button>
                 <button type="submit" name="action" value="edit"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm">
                     ✏️ Редактировать выбранную
                 </button>
             </div>
@@ -65,14 +89,14 @@
     </div>
 
     <script>
-        document.getElementById('select-all').addEventListener('change', function (e) {
+        document.getElementById('select-all')?.addEventListener('change', function (e) {
             const checkboxes = document.querySelectorAll('input[name="ids[]"]');
             checkboxes.forEach(cb => cb.checked = e.target.checked);
         });
 
-        document.getElementById('bulk-action-form').addEventListener('submit', function (e) {
+        document.getElementById('bulk-action-form')?.addEventListener('submit', function (e) {
             const checked = document.querySelectorAll('input[name="ids[]"]:checked');
-            const action = e.submitter.value;
+            const action = e.submitter?.value;
 
             if (action === 'edit' && checked.length !== 1) {
                 e.preventDefault();
