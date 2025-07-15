@@ -16,57 +16,103 @@
             {% if forms is empty %}
                 <div class="text-center text-gray-500 dark:text-gray-400 py-12">Формы не найдены.</div>
             {% else %}
-                <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {% for form in forms %}
-                        <div
-                            class="bg-white dark:bg-gray-700 rounded-xl shadow p-5 flex flex-col justify-between h-full">
-                            <div>
-                                <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-1">{{ form.title }}</h2>
-                                <p class="text-sm text-gray-600 dark:text-gray-300 mb-3">
-                                    {{ form.description|default('—') }}
-                                </p>
+                <form method="post" action="{{ path('form_template_bulk_delete') }}"
+                      onsubmit="return confirm('Вы уверены, что хотите удалить выбранные формы?');">
+
+                    <div class="flex justify-end mb-4">
+                        <button type="submit"
+                                class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
+                            🗑 Удалить выбранные
+                        </button>
+                    </div>
+
+                    {# TABLE VIEW FOR LARGE SCREENS #}
+                    <div class="hidden lg:table w-full bg-gray-50 dark:bg-gray-700 rounded-lg overflow-hidden">
+                        <div class="table-header-group text-gray-700 dark:text-white bg-gray-200 dark:bg-gray-600">
+                            <div class="table-row">
+                                <div class="table-cell p-3 text-left w-10">
+                                    <input type="checkbox" onclick="toggleAll(this)" class="w-5 h-5">
+                                </div>
+                                <div class="table-cell p-3">Название</div>
+                                <div class="table-cell p-3">Описание</div>
+                                <div class="table-cell p-3">Автор</div>
+                                <div class="table-cell p-3">Создано</div>
+                                <div class="table-cell p-3">Обновлено</div>
+                                <div class="table-cell p-3">Действия</div>
+                            </div>
+                        </div>
+                        <div class="table-row-group">
+                            {% for form in forms %}
+                                <div class="table-row border-t border-gray-300 dark:border-gray-600">
+                                    <div class="table-cell p-3 align-middle">
+                                        <input type="checkbox" name="selected[]" value="{{ form.id }}" class="w-5 h-5">
+                                    </div>
+                                    <div class="table-cell p-3 align-middle">{{ form.title }}</div>
+                                    <div class="table-cell p-3 align-middle">{{ form.description|default('—') }}</div>
+                                    <div class="table-cell p-3 align-middle">
+                                        {{ is_granted('ROLE_SUPER_ADMIN') ? form.owner.email : '—' }}
+                                    </div>
+                                    <div class="table-cell p-3 align-middle">{{ form.createdAt|date('d.m.Y') }}</div>
+                                    <div class="table-cell p-3 align-middle">{{ form.updatedAt|date('d.m.Y H:i') }}</div>
+                                    <div class="table-cell p-3 align-middle space-x-2">
+                                        <a href="{{ path('form_template_view', { id: form.id }) }}"
+                                           class="text-sm text-purple-600 dark:text-purple-400 hover:underline">Открыть</a>
+                                        {% if app.user == form.owner or is_granted('ROLE_SUPER_ADMIN') %}
+                                            <a href="{{ path('form_template_edit', { id: form.id }) }}"
+                                               class="text-sm text-blue-600 dark:text-blue-400 hover:underline">Редактировать</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    {# CARD VIEW FOR SMALL SCREENS #}
+                    <div class="lg:hidden grid gap-6 sm:grid-cols-2">
+                        {% for form in forms %}
+                            <div class="bg-white dark:bg-gray-700 rounded-xl shadow p-5 flex flex-col justify-between h-full">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-1">{{ form.title }}</h2>
+                                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">
+                                            {{ form.description|default('—') }}
+                                        </p>
+                                    </div>
+                                    <input type="checkbox" name="selected[]" value="{{ form.id }}" class="w-5 h-5 mt-1">
+                                </div>
 
                                 <div class="text-xs text-gray-500 dark:text-gray-400 mb-1">
-                                    <span>Создано:</span>
-                                    {{ form.createdAt ? form.createdAt|date('d.m.Y') : '—' }}
+                                    <span>Создано:</span> {{ form.createdAt|date('d.m.Y') }}
                                 </div>
                                 <div class="text-xs text-gray-500 dark:text-gray-400">
-                                    <span>Обновлено:</span>
-                                    {{ form.updatedAt ? form.updatedAt|date('d.m.Y H:i') : '—' }}
+                                    <span>Обновлено:</span> {{ form.updatedAt|date('d.m.Y H:i') }}
                                 </div>
                                 {% if is_granted('ROLE_SUPER_ADMIN') %}
                                     <div class="text-xs text-gray-500 dark:text-gray-400">
-                                        <span>Автор:</span>
-                                        {{ form.owner.email }}
+                                        <span>Автор:</span> {{ form.owner.email }}
                                     </div>
                                 {% endif %}
+
+                                <div class="mt-4 flex flex-wrap gap-3">
+                                    <a href="{{ path('form_template_view', { id: form.id }) }}"
+                                       class="text-sm text-purple-600 dark:text-purple-400 hover:underline">Открыть</a>
+                                    {% if app.user == form.owner or is_granted('ROLE_SUPER_ADMIN') %}
+                                        <a href="{{ path('form_template_edit', { id: form.id }) }}"
+                                           class="text-sm text-blue-600 dark:text-blue-400 hover:underline">Редактировать</a>
+                                    {% endif %}
+                                </div>
                             </div>
-
-                            <div class="mt-4 flex flex-wrap gap-3">
-                                <a href="{{ path('form_template_view', { id: form.id }) }}"
-                                   class="text-sm text-purple-600 dark:text-purple-400 hover:underline">Открыть</a>
-
-                                {% if app.user == form.owner or is_granted('ROLE_SUPER_ADMIN') %}
-                                    <a href="{{ path('form_template_edit', { id: form.id }) }}"
-                                       class="text-sm text-blue-600 dark:text-blue-400 hover:underline">Редактировать</a>
-
-                                    <form method="post"
-                                          action="{{ path('form_template_delete', { id: form.id }) }}"
-                                          class="inline"
-                                          onsubmit="return confirm('Вы уверены, что хотите удалить эту форму?');">
-                                        <input type="hidden" name="_token"
-                                               value="{{ csrf_token('delete_form_' ~ form.id) }}">
-                                        <button type="submit"
-                                                class="text-sm text-red-600 dark:text-red-400 hover:underline bg-transparent border-none p-0 m-0"
-                                                style="cursor:pointer;">Удалить
-                                        </button>
-                                    </form>
-                                {% endif %}
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
+                        {% endfor %}
+                    </div>
+                </form>
             {% endif %}
         </div>
     </div>
+
+    <script>
+        function toggleAll(masterCheckbox) {
+            const checkboxes = document.querySelectorAll('input[name="selected[]"]');
+            checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
+        }
+    </script>
 {% endblock %}
