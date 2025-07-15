@@ -11,6 +11,17 @@
                 <div class="space-y-2 text-gray-700 dark:text-gray-300">
                     <p><span class="font-semibold">Email:</span> {{ user.email }}</p>
                     <p><span class="font-semibold">Роли:</span> {{ user.roles|join(', ') }}</p>
+
+                    {% if is_granted('ROLE_USER') %}
+                        <a href="{{ path('generate_api_token') }}"
+                           class="block w-full sm:w-auto text-center bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">
+                            🔐 Сгенерировать API токен
+                        </a>
+                    {% endif %}
+
+                    {% for token in app.user.apiTokens %}
+                        <p><span class="font-semibold">Ваш токен:</span> <code>{{ token.token }}</code></p>
+                    {% endfor %}
                     <div class="flex flex-col sm:flex-row gap-4">
                         <a href="{{ path('salesforce_connect', {'redirectTo': path('salesforce_form', {'id': app.user.id}) }) }}"
                            class="block w-full sm:w-auto text-center bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded">
