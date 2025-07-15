@@ -201,7 +201,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-
     public function getFormSubmissions(): Collection
     {
         return $this->formSubmissions;
@@ -220,7 +219,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeFormSubmission(FormSubmission $formSubmission): static
     {
         if ($this->formSubmissions->removeElement($formSubmission)) {
-            // set the owning side to null (unless already changed)
             if ($formSubmission->getUser() === $this) {
                 $formSubmission->setUser(null);
             }
@@ -248,7 +246,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeApiToken(ApiToken $apiToken): static
     {
         if ($this->apiTokens->removeElement($apiToken)) {
-            // set the owning side to null (unless already changed)
             if ($apiToken->getUser() === $this) {
                 $apiToken->setUSer(null);
             }
@@ -256,7 +253,4 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
-
-
 }
