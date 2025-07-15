@@ -53,11 +53,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Like::class, mappedBy: 'author', orphanRemoval: true)]
     private Collection $likes;
 
+    /**
+     * @var Collection<int, FormSubmission>
+     */
+    #[ORM\OneToMany(targetEntity: FormSubmission::class, mappedBy: 'owner')]
+    private Collection $formSubmissions;
+
 
     public function __construct()
     {
         $this->formTemplates = new ArrayCollection();
         $this->likes = new ArrayCollection();
+        $this->formSubmissions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -183,6 +190,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->likes->removeElement($like)) {
             if ($like->getAuthor() === $this) {
                 $like->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, FormSubmission>
+     */
+    public function getFormSubmissions(): Collection
+    {
+        return $this->formSubmissions;
+    }
+
+    public function addFormSubmission(FormSubmission $formSubmission): static
+    {
+        if (!$this->formSubmissions->contains($formSubmission)) {
+            $this->formSubmissions->add($formSubmission);
+            $formSubmission->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFormSubmission(FormSubmission $formSubmission): static
+    {
+        if ($this->formSubmissions->removeElement($formSubmission)) {
+            // set the owning side to null (unless already changed)
+            if ($formSubmission->getOwner() === $this) {
+                $formSubmission->setOwner(null);
             }
         }
 

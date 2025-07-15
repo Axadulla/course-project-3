@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\FormFieldRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FormFieldRepository::class)]
@@ -115,6 +117,17 @@ class FormField
     #[\Doctrine\ORM\Mapping\Transient]
     private ?string $optionsRaw = null;
 
+    /**
+     * @var Collection<int, FormAnswer>
+     */
+    #[ORM\OneToMany(targetEntity: FormAnswer::class, mappedBy: 'field')]
+    private Collection $answers;
+
+    public function __construct()
+    {
+        $this->answers = new ArrayCollection();
+    }
+
 
     public function getOptionsRaw(): ?string
     {
@@ -124,6 +137,36 @@ class FormField
     public function setOptionsRaw(?string $optionsRaw): void
     {
         $this->optionsRaw = $optionsRaw;
+    }
+
+    /**
+     * @return Collection<int, FormAnswer>
+     */
+    public function getAnswers(): Collection
+    {
+        return $this->answers;
+    }
+
+    public function addAnswer(FormAnswer $answer): static
+    {
+        if (!$this->answers->contains($answer)) {
+            $this->answers->add($answer);
+            $answer->setField($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAnswer(FormAnswer $answer): static
+    {
+        if ($this->answers->removeElement($answer)) {
+            // set the owning side to null (unless already changed)
+            if ($answer->getField() === $this) {
+                $answer->setField(null);
+            }
+        }
+
+        return $this;
     }
 
 

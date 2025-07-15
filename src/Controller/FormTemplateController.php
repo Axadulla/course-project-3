@@ -126,8 +126,6 @@ final class FormTemplateController extends AbstractController
             $em->persist($submission);
             $em->flush();
 
-            $this->addFlash('success', 'Спасибо! Ваши ответы были успешно отправлены.');
-
             return $this->redirectToRoute('form_template_view', ['id' => $formTemplate->getId()]);
         }
 
@@ -190,9 +188,8 @@ final class FormTemplateController extends AbstractController
                 }
             }
             $em->flush();
-            $this->addFlash('success', 'Выбранные формы удалены.');
         } else {
-            $this->addFlash('warning', 'Ничего не выбрано для удаления.');
+            $this->addFlash();
         }
 
         return $this->redirectToRoute('form_template_index');
