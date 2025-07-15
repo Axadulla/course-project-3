@@ -60,11 +60,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $formSubmissions;
 
 
+    #[ORM\OneToMany(targetEntity: ApiToken::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $apiTokens;
+
+
     public function __construct()
     {
         $this->formTemplates = new ArrayCollection();
         $this->likes = new ArrayCollection();
         $this->formSubmissions = new ArrayCollection();
+        $this->apiTokens = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -196,9 +201,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, FormSubmission>
-     */
+
     public function getFormSubmissions(): Collection
     {
         return $this->formSubmissions;
@@ -208,7 +211,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->formSubmissions->contains($formSubmission)) {
             $this->formSubmissions->add($formSubmission);
-            $formSubmission->setOwner($this);
+            $formSubmission->setUser($this);
         }
 
         return $this;
@@ -218,11 +221,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->formSubmissions->removeElement($formSubmission)) {
             // set the owning side to null (unless already changed)
-            if ($formSubmission->getOwner() === $this) {
-                $formSubmission->setOwner(null);
+            if ($formSubmission->getUser() === $this) {
+                $formSubmission->setUser(null);
             }
         }
 
         return $this;
     }
+
+
+    public function getApiTokens(): Collection
+    {
+        return $this->apiTokens;
+    }
+
+    public function addApiToken(ApiToken $apiToken): static
+    {
+        if (!$this->apiTokens->contains($apiToken)) {
+            $this->apiTokens->add($apiToken);
+            $apiToken->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeApiToken(ApiToken $apiToken): static
+    {
+        if ($this->apiTokens->removeElement($apiToken)) {
+            // set the owning side to null (unless already changed)
+            if ($apiToken->getUser() === $this) {
+                $apiToken->setUSer(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+
 }
