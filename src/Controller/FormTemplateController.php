@@ -92,13 +92,43 @@ final class FormTemplateController extends AbstractController
         ]);
     }
 
-    #[Route('/form-template/{id}/view', name: 'form_template_view')]
+    #[Route('/form-template/{id}/view', name: 'form_template_view', methods: ['GET', 'POST'])]
     public function view(FormTemplate $formTemplate, Request $request, EntityManagerInterface $em): Response
     {
         $user = $this->getUser();
 
         if (!$formTemplate->isPublic() && $formTemplate->getOwner() !== $user && !$this->isGranted('ROLE_SUPER_ADMIN')) {
             throw $this->createAccessDeniedException();
+        }
+
+
+        if ($request->isMethod('POST') && !$request->request->has('comment')) {
+            $submission = new \App\Entity\FormSubmission();
+            $submission->setTemplate($formTemplate);
+            $submission->setUser($user);
+            $submission->setSubmittedAt(new \DateTimeImmutable());
+
+            foreach ($formTemplate->getFields() as $field) {
+                $fieldName = strtolower(str_replace(' ', '_', $field->getLabel()));
+                $value = $request->request->get($fieldName);
+
+                if ($value !== null) {
+                    $answer = new \App\Entity\FormAnswer();
+                    $answer->setField($field);
+                    $answer->setSubmission($submission);
+                    $answer->setValue(is_array($value) ? json_encode($value) : (string)$value);
+
+                    $submission->getAnswers()->add($answer);
+                    $em->persist($answer);
+                }
+            }
+
+            $em->persist($submission);
+            $em->flush();
+
+            $this->addFlash('success', 'Спасибо! Ваши ответы были успешно отправлены.');
+
+            return $this->redirectToRoute('form_template_view', ['id' => $formTemplate->getId()]);
         }
 
         $comment = new Comment();
@@ -146,6 +176,28 @@ final class FormTemplateController extends AbstractController
             'forms' => $forms,
         ]);
     }
+
+    #[Route('/forms/delete/bulk', name: 'form_template_bulk_delete', methods: ['POST'])]
+    public function bulkDelete(Request $request, EntityManagerInterface $em, FormTemplateRepository $repo): Response
+    {
+        $selected = $request->request->all('selected');
+
+        if (!empty($selected)) {
+            foreach ($selected as $id) {
+                $form = $repo->find($id);
+                if ($form && ($form->getOwner() === $this->getUser() || $this->isGranted('ROLE_SUPER_ADMIN'))) {
+                    $em->remove($form);
+                }
+            }
+            $em->flush();
+            $this->addFlash('success', 'Выбранные формы удалены.');
+        } else {
+            $this->addFlash('warning', 'Ничего не выбрано для удаления.');
+        }
+
+        return $this->redirectToRoute('form_template_index');
+    }
+
 
     #[Route('/form-template/{id}/delete', name: 'form_template_delete', methods: ['POST'])]
     public function delete(FormTemplate $formTemplate, EntityManagerInterface $em, Request $request): Response
