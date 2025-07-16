@@ -18,7 +18,6 @@ class ApiTokenController extends AbstractController
     {
         $user = $this->getUser();
 
-        // Если токен уже есть — не создаём дубликаты
         if ($user->getApiTokens()->count() === 0) {
             $token = new ApiToken($user);
             $em->persist($token);
